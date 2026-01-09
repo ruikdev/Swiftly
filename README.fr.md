@@ -173,19 +173,36 @@ http://localhost:5000/sites/mon-super-site
 
 ## 💻 Utilisation CLI
 
-Swiftly est livré avec un outil CLI interactif et puissant pour gérer vos déploiements.
+Swiftly est livré avec un outil CLI interactif et puissant pour gérer vos déploiements. Le CLI peut être utilisé indépendamment du serveur !
 
-### Installation
+### Installation Rapide (CLI Uniquement)
 
-Le CLI est déjà inclus dans le projet. Assurez-vous simplement que `requests` est installé :
+Si vous voulez utiliser uniquement le CLI (sans lancer le serveur) :
 
+1. **Télécharger le fichier CLI :**
+```bash
+curl -O https://raw.githubusercontent.com/ruikdev/Swiftly/main/swiftly_cli.py
+```
+
+Ou copiez `swiftly_cli.py` depuis le dépôt.
+
+2. **Installer la seule dépendance requise :**
 ```bash
 pip install requests
 ```
 
-Ou installez toutes les dépendances :
+3. **Lancer le CLI :**
+```bash
+python3 swiftly_cli.py
+```
+
+### Installation Complète (Avec Serveur)
+
+Si vous voulez lancer à la fois le serveur et le CLI :
 
 ```bash
+git clone https://github.com/ruikdev/Swiftly.git
+cd Swiftly
 pip install -r requirements.txt
 ```
 
