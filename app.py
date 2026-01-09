@@ -50,4 +50,7 @@ def health():
 
 
 if __name__ == "__main__":
+    # Test rapide : ajout du site exemple au démarrage
+    add_site_to_db("exemple", "exemple.html")
+    save_db()
     app.run(host="0.0.0.0", port=5000, debug=True)
