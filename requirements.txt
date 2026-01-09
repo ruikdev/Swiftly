@@ -1,3 +1,2 @@
-Flask>=2.0.0
-# Ajoutez d'autres dépendances si vous les utilisez (ex: gunicorn, requests)
+Flask==3.0.0
 
