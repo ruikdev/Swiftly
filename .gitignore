@@ -1,0 +1,72 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# IDEs
+.idea/
+.vscode/
+
+# Virtual environments
+.env
+.env.*
+venv/
+venv.bak/
+.venv/
+env/
+ENV/
+
+# macOS
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+instance/
+
+# Project-specific: don't commit local DB or generated site files
+db/sites.json
+sites/
+
+# Python build artifacts
+pip-wheel-metadata/
+__pypackages__/
+
+# Node
+node_modules/
+
