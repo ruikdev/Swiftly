@@ -17,6 +17,28 @@ def load_db():
 
 sites = load_db()
 
+def save_db():
+    try:
+        with open(db_sites, 'w') as f:
+            json.dump(sites, f, indent=4)
+    except Exception as e:
+        print(f"Erreur lors de la sauvegarde : {e}")
+
+def add_site_to_db(name, filename):
+    sites[name] = filename
+    save_db()
+    return True
+
+def get_all_sites():
+    return sites
+
+def delete_site_from_db(name):
+    if name in sites:
+        del sites[name]
+        save_db()
+        return True
+    return False
+
 @app.route("/")
 def index():
     return "Bonjour depuis Flask !"
