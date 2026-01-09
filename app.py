@@ -75,27 +75,58 @@ def list_sites():
 # API : Ajouter un nouveau site
 @app.route("/api/sites", methods=["POST"])
 def create_site():
-    """Ajouter un nouveau site"""
-    data = request.get_json()
-
-    if not data or 'name' not in data or 'filename' not in data:
-        return jsonify(error="Les champs 'name' et 'filename' sont requis"), 400
-
-    name = data['name']
-    filename = data['filename']
-
-    # Vérifier si le site existe déjà
-    if name in sites:
-        return jsonify(error=f"Le site '{name}' existe déjà"), 409
-
-    # Vérifier si le fichier existe
-    filepath = os.path.join(sites_folder, filename)
-    if not os.path.exists(filepath):
-        return jsonify(error=f"Le fichier '{filename}' n'existe pas dans le dossier sites/"), 404
-
-    # Ajouter le site
-    add_site_to_db(name, filename)
-    return jsonify(message=f"Site '{name}' ajouté avec succès", site={name: filename}), 201
+    """Ajouter un nouveau site avec upload de fichier HTML"""
+    
+    # Vérifier si un fichier est présent dans la requête
+    if 'file' in request.files:
+        # Mode upload: on reçoit le fichier HTML
+        file = request.files['file']
+        name = request.form.get('name')
+        
+        # Validation
+        if not name:
+            return jsonify(error="Le champ 'name' est requis"), 400
+        
+        if file.filename == '':
+            return jsonify(error="Aucun fichier sélectionné"), 400
+        
+        # Vérifier si le site existe déjà
+        if name in sites:
+            return jsonify(error=f"Le site '{name}' existe déjà"), 409
+        
+        # Vérifier l'extension du fichier
+        if not file.filename.endswith('.html'):
+            return jsonify(error="Le fichier doit être un fichier HTML (.html)"), 400
+        
+        # Générer un nom de fichier sécurisé
+        from werkzeug.utils import secure_filename
+        filename = secure_filename(file.filename)
+        
+        # Si le nom du site est différent du nom de fichier, on peut utiliser le nom du site
+        # Pour éviter les conflits, on peut utiliser: name.html
+        filename = f"{secure_filename(name)}.html"
+        
+        # Sauvegarder le fichier
+        filepath = os.path.join(sites_folder, filename)
+        
+        # Créer le dossier sites s'il n'existe pas
+        os.makedirs(sites_folder, exist_ok=True)
+        
+        try:
+            file.save(filepath)
+        except Exception as e:
+            return jsonify(error=f"Erreur lors de la sauvegarde du fichier: {str(e)}"), 500
+        
+        # Ajouter le site à la DB
+        add_site_to_db(name, filename)
+        return jsonify(
+            message=f"Site '{name}' ajouté avec succès",
+            site={name: filename},
+            url=f"/sites/{name}"
+        ), 201
+    
+    else:
+        return jsonify(error=f"Votre requete ne contient pas de fichier html"), 404
 
 # API : Supprimer un site
 @app.route("/api/sites/<site_name>", methods=["DELETE"])
