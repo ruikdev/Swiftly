@@ -3,18 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Swiftly</title>
+    <title>Swiftly - The Open Source Netlify Alternative</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <header class="bg-blue-600 text-white p-4">
-        <h1 class="text-2xl font-bold">Bienvenue sur Swiftly</h1>
-    </header>
-    <main class="p-4">
-        <!-- Contenu principal -->
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
+    
+    <!-- Navbar -->
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <!-- Simple Logo Icon -->
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold">
+                        S
+                    </div>
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-brand-400">
+                        Swiftly
+                    </span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-600">
+                    <a href="#" class="hover:text-brand-600 transition-colors">Features</a>
+                    <a href="#" class="hover:text-brand-600 transition-colors">Documentation</a>
+                    <a href="#" class="hover:text-brand-600 transition-colors">Blog</a>
+                    <a href="https://github.com/ruikdev/Swiftly" class="hover:text-brand-600 transition-colors">GitHub</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-brand-600">Log In</a>
+                    <a href="#" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 rounded-full hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/30">
+                        Start Deploying
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main>
+        <div class="relative overflow-hidden pt-16 pb-24 lg:pt-32">
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900">
+                        Deploy your frontend <br class="hidden sm:block" />
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-indigo-600">
+                            Swiftly & Open Source
+                        </span>
+                    </h1>
+                    <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-slate-600">
+                        The fastest way to combine your favorite static site generators with the power of open source hosting. No lock-in, just performance.
+                    </p>
+                    <div class="mt-10 flex justify-center gap-4">
+                        <a href="#" class="px-8 py-3.5 text-base font-semibold text-white bg-brand-600 rounded-full hover:bg-brand-700 md:text-lg transition-transform hover:scale-105 shadow-xl shadow-brand-500/20">
+                            Deploy for Free
+                        </a>
+                        <a href="https://github.com/ruikdev/Swiftly" class="px-8 py-3.5 text-base font-semibold text-slate-700 bg-white border border-slate-200 rounded-full hover:bg-slate-50 md:text-lg transition-all hover:border-brand-300">
+                            View on GitHub
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Terminal Demo -->
+                <div class="mt-16 relative">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-50 to-transparent z-10 h-24 bottom-0"></div>
+                    <div class="bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-2 sm:p-4 max-w-5xl mx-auto transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                        <div class="flex items-center gap-2 mb-4 px-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <div class="ml-4 px-3 py-1 bg-slate-800 rounded-md text-xs text-slate-400 font-mono w-full max-w-md">swiftly deploy ./my-site</div>
+                        </div>
+                        <div class="bg-slate-950 rounded-lg p-6 font-mono text-sm text-slate-300 overflow-hidden">
+                            <div class="mb-2"><span class="text-green-400">✔</span> Project initialized</div>
+                            <div class="mb-2"><span class="text-green-400">✔</span> Building assets... <span class="text-slate-500">(2.1s)</span></div>
+                            <div class="mb-2"><span class="text-green-400">✔</span> Uploading to Swiftly Edge...</div>
+                            <div class="mb-4"><span class="text-green-400">✔</span> Published successfully!</div>
+                            
+                            <div class="text-brand-400">
+                                ➜  Site URL: <span class="underline decoration-dashed text-white">https://my-awesome-site.swiftly.app</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bg decoration -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-[800px] h-[800px] bg-brand-500/10 rounded-full blur-3xl opacity-50"></div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="bg-white py-24 sm:py-32">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-base font-semibold uppercase tracking-wide text-brand-600">Features</h2>
+                    <p class="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">Everything you need to ship faster</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <!-- Feature 1 -->
+                    <div class="group p-8 rounded-2xl bg-slate-50 hover:bg-white hover:shadow-xl transition-all border border-slate-100 hover:border-brand-100">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Blazing Fast</h3>
+                        <p class="text-slate-600">Deployments are instant. We serve your content from a global edge network to ensure low latency for everyone.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="group p-8 rounded-2xl bg-slate-50 hover:bg-white hover:shadow-xl transition-all border border-slate-100 hover:border-brand-100">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Developer First</h3>
+                        <p class="text-slate-600">CLI tools, API access, and seamless Git integration. Built by developers, for developers.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="group p-8 rounded-2xl bg-slate-50 hover:bg-white hover:shadow-xl transition-all border border-slate-100 hover:border-brand-100">
+                        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Open Source</h3>
+                        <p class="text-slate-600">Self-host it or use our managed service. You own your data and your infrastructure.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLI Section -->
+        <div class="py-24 bg-slate-900 text-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16">
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl font-bold tracking-tight mb-6">Deploy from your terminal</h2>
+                    <p class="text-slate-400 text-lg mb-8">
+                        Link your local directory to Swiftly and deploy updates with a single command. It's that simple.
+                    </p>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold border border-brand-700">1</div>
+                            <span class="text-lg">Install the CLI tool</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold border border-brand-700">2</div>
+                            <span class="text-lg">Run <code class="bg-black/30 px-2 py-1 rounded text-brand-300 font-mono">swiftly login</code></span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold border border-brand-700">3</div>
+                            <span class="text-lg">Deploy at will</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Terminal Demo -->
+                <div class="lg:w-1/2 w-full">
+                    <div class="bg-black rounded-xl p-6 shadow-2xl font-mono text-sm border border-slate-800">
+                        <p class="text-slate-400">$ npm install -g swiftly-cli</p>
+                        <p class="text-slate-500 mb-2">Installed swiftly-cli v1.0.0</p>
+                        
+                        <p class="text-slate-400">$ cd my-project</p>
+                        <p class="text-slate-400">$ swiftly deploy</p>
+                        <p class="text-brand-400 mt-2">Deploying...</p>
+                        <div class="w-full bg-slate-800 h-1 mt-1 mb-2 rounded-full overflow-hidden">
+                            <div class="bg-brand-500 h-full w-2/3"></div>
+                        </div>
+                        <p class="text-green-400">Success! Deployed to https://dramatic-alpaca-123.swiftly.app</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
-    <footer class="bg-gray-800 text-white p-4 text-center">
-        <p>&copy; 2026 Swiftly. Tous droits réservés.</p>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 tracking-wider uppercase mb-4">Product</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Features</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Pricing</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Changelog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 tracking-wider uppercase mb-4">Resources</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Documentation</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">API Reference</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 tracking-wider uppercase mb-4">Company</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">About</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Blog</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 tracking-wider uppercase mb-4">Legal</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Privacy</a></li>
+                        <li><a href="#" class="text-slate-500 hover:text-brand-600">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 pt-8 flex justify-between items-center">
+                <p class="text-slate-400 text-sm">© 2026 Swiftly. Open Source MIT License.</p>
+                <div class="flex space-x-6 text-slate-400">
+                    <a href="https://github.com/ruikdev/Swiftly" class="hover:text-slate-600">
+                        <span class="sr-only">GitHub</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032 .892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
