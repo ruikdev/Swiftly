@@ -240,6 +240,27 @@ You can modify these in [app.py](app.py).
 - ✅ Duplicate name prevention
 - ✅ Path traversal protection
 
+## 🗺️ Roadmap
+
+### Coming Soon
+- [ ] Custom domain support
+- [ ] SSL/TLS certificates automation
+- [ ] Multi-file site deployment (entire directories)
+- [ ] Git integration for automatic deployments
+- [ ] Dashboard UI for site management
+- [ ] Environment variables support
+- [ ] Site analytics
+- [ ] CDN integration
+- [ ] Webhook support for CI/CD
+- [ ] User authentication system
+- [ ] Enhanced security features
+
+### In Progress
+- [x] Basic HTML file deployment
+- [x] REST API
+- [x] CLI tool
+- [x] File upload via API
+
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to:

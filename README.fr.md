@@ -240,6 +240,27 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - ✅ Prévention des noms en double
 - ✅ Protection contre la traversée de chemin
 
+## 🗺️ Feuille de Route
+
+### À Venir
+- [ ] Support des domaines personnalisés
+- [ ] Automatisation des certificats SSL/TLS
+- [ ] Déploiement multi-fichiers (répertoires entiers)
+- [ ] Intégration Git pour déploiements automatiques
+- [ ] Interface Dashboard pour la gestion des sites
+- [ ] Support des variables d'environnement
+- [ ] Analytiques de site
+- [ ] Intégration CDN
+- [ ] Support des webhooks pour CI/CD
+- [ ] Système d'authentification utilisateur
+- [ ] Fonctionnalités de sécurité améliorées
+
+### En Cours
+- [x] Déploiement basique de fichiers HTML
+- [x] API REST
+- [x] Outil CLI
+- [x] Upload de fichiers via API
+
 ## 🤝 Contribuer
 
 Les contributions sont les bienvenues ! N'hésitez pas à :
