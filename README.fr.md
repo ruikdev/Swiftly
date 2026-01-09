@@ -173,6 +173,80 @@ http://localhost:5000/sites/mon-super-site
 
 ## 💻 Utilisation CLI
 
+Swiftly est livré avec un outil CLI interactif et puissant pour gérer vos déploiements.
+
+### Installation
+
+Le CLI est déjà inclus dans le projet. Assurez-vous simplement que `requests` est installé :
+
+```bash
+pip install requests
+```
+
+Ou installez toutes les dépendances :
+
+```bash
+pip install -r requirements.txt
+```
+
+### Lancer le CLI
+
+Démarrez le CLI interactif :
+
+```bash
+python3 swiftly_cli.py
+```
+
+Au premier lancement, vous serez invité à sélectionner votre langue :
+- 🇫🇷 Français
+- 🇬🇧 English
+
+### Fonctionnalités
+
+Le CLI offre un menu interactif avec les options suivantes :
+
+**Gestion du Compte :**
+- Créer un nouveau compte (email + mot de passe)
+- Se connecter
+- Voir votre profil
+- Modifier votre email
+- Modifier votre mot de passe
+- Se déconnecter
+
+**Gestion des Sites :**
+- Lister tous vos sites déployés
+- Déployer un nouveau site (télécharger un fichier HTML)
+- Supprimer un site
+
+**Autre :**
+- Vérifier la santé de l'API
+- Changer de langue à tout moment (option 9)
+
+### Flux d'Utilisation Exemple
+
+```
+1. Démarrer le CLI : python3 swiftly_cli.py
+2. Sélectionner votre langue (Français ou Anglais)
+3. Créer un compte ou se connecter
+4. Déployer vos fichiers HTML
+5. Lister vos sites
+6. Partager vos URLs de site !
+```
+
+### Stockage des Identifiants
+
+Vos identifiants sont stockés de manière sécurisée localement dans `~/.swiftly_config.json` avec des permissions restreintes (600). Vous n'aurez pas besoin de vous reconnecter sur la même machine.
+
+### Headers d'Authentification
+
+Toutes les requêtes API effectuées par le CLI incluent automatiquement vos identifiants dans ces headers :
+- `X-User-Email`: Votre email
+- `X-User-Password`: Votre mot de passe
+
+---
+
+## 💻 Utilisation CLI
+
 Swiftly est livré avec un puissant outil CLI pour tester et gérer vos déploiements.
 
 ### Installation

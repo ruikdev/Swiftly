@@ -173,39 +173,81 @@ http://localhost:5000/sites/my-awesome-site
 
 ## 💻 CLI Usage
 
-Swiftly comes with a powerful CLI tool for testing and managing your deployments.
+Swiftly comes with a powerful interactive CLI tool for managing your deployments.
 
-### Setup
+### Installation
+
+The CLI is already included in the project. Just make sure `requests` is installed:
+
 ```bash
 pip install requests
 ```
 
-### Commands
+Or install all dependencies:
 
-**Check API health:**
 ```bash
-python cli_api_test.py health
+pip install -r requirements.txt
 ```
 
-**List all sites:**
+### Running the CLI
+
+Start the interactive CLI:
+
 ```bash
-python cli_api_test.py list
+python3 swiftly_cli.py
 ```
 
-**Deploy a new site:**
-```bash
-python cli_api_test.py add my-blog index.html
+On the first run, you'll be asked to select your language:
+- 🇫🇷 Français (French)
+- 🇬🇧 English
+
+### Features
+
+The CLI offers an interactive menu with the following options:
+
+**Account Management:**
+- Create a new account (email + password)
+- Login
+- View your profile
+- Change your email
+- Change your password
+- Logout
+
+**Site Management:**
+- List all your deployed sites
+- Deploy a new site (upload HTML file)
+- Delete a site
+
+**Other:**
+- Check API health
+- Change language anytime (option 9)
+
+### Example Workflow
+
+```
+1. Start CLI: python3 swiftly_cli.py
+2. Select language (French or English)
+3. Create account or login
+4. Deploy your HTML files
+5. List your sites
+6. Share your site URLs!
 ```
 
-**Delete a site:**
-```bash
-python cli_api_test.py delete my-blog
-```
+### Credentials Storage
 
-**Show help:**
-```bash
-python cli_api_test.py help
-```
+Your credentials are securely stored locally in `~/.swiftly_config.json` with restricted permissions (600). You won't need to login again on the same machine.
+
+### Authentication Headers
+
+All API requests made by the CLI automatically include your credentials in these headers:
+- `X-User-Email`: Your email
+- `X-User-Password`: Your password
+
+---
+
+## 💻 CLI Usage
+
+Swiftly comes with a powerful CLI tool for testing and managing your deployments.
 
 ## 📁 Project Structure
 
