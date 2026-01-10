@@ -45,7 +45,15 @@ TRANSLATIONS = {
         "your_sites": "🌐 VOS SITES",
         "deploy_title": "🚀 DÉPLOYER UN SITE",
         "site_name": "Nom du site: ",
+        "folder_path": "Chemin du dossier du projet: ",
         "file_path": "Chemin du fichier HTML: ",
+        "folder_not_found": "Le dossier",
+        "folder_not_exists": "n'existe pas",
+        "folder_not_dir": "Le chemin ne pointe pas vers un dossier",
+        "index_missing": "❌ Le dossier doit contenir un fichier 'index.html' à la racine",
+        "scanning_folder": "📂 Analyse du dossier...",
+        "files_found": "fichiers trouvés",
+        "uploading": "📤 Upload en cours...",
         "file_not_found": "Le fichier",
         "file_not_exists": "n'existe pas",
         "file_not_html": "Le fichier doit être un fichier HTML (.html)",
@@ -100,7 +108,15 @@ TRANSLATIONS = {
         "your_sites": "🌐 YOUR SITES",
         "deploy_title": "🚀 DEPLOY A SITE",
         "site_name": "Site name: ",
+        "folder_path": "Project folder path: ",
         "file_path": "HTML file path: ",
+        "folder_not_found": "The folder",
+        "folder_not_exists": "does not exist",
+        "folder_not_dir": "The path does not point to a folder",
+        "index_missing": "❌ The folder must contain an 'index.html' file at the root",
+        "scanning_folder": "📂 Scanning folder...",
+        "files_found": "files found",
+        "uploading": "📤 Uploading...",
         "file_not_found": "The file",
         "file_not_exists": "does not exist",
         "file_not_html": "The file must be an HTML file (.html)",
@@ -339,10 +355,20 @@ class SwiftlyCLI:
                 else:
                     print(self.t("your_sites") + "\n")
                     for name, data in sites.items():
-                        filename = data.get("filename") if isinstance(data, dict) else data
-                        print(f"📄 {name}")
-                        print(f"   {self.t('file_label')} {filename}")
-                        print(f"   {self.t('url_label')} {self.api_url}/sites/{name}\n")
+                        # Nouveau format avec dossier
+                        if isinstance(data, dict) and "folder" in data:
+                            folder = data.get("folder")
+                            file_count = data.get("file_count", "?")
+                            print(f"📂 {name}")
+                            print(f"   └─ Dossier: {folder}")
+                            print(f"   └─ Fichiers: {file_count}")
+                            print(f"   {self.t('url_label')} {self.api_url}/sites/{name}\n")
+                        # Ancien format avec fichier unique
+                        elif isinstance(data, dict) and "filename" in data:
+                            filename = data.get("filename")
+                            print(f"📝 {name}")
+                            print(f"   {self.t('file_label')} {filename}")
+                            print(f"   {self.t('url_label')} {self.api_url}/sites/{name}\n")
             else:
                 try:
                     error_msg = response.json().get('error', 'Unknown error')
@@ -359,33 +385,65 @@ class SwiftlyCLI:
         print(self.t("deploy_title") + "\n")
         
         name = input(self.t("site_name")).strip()
-        filepath = input(self.t("file_path")).strip().strip("'\"")
+        folder_path = input(self.t("folder_path")).strip().strip("'\"")
         
-        if not os.path.exists(filepath):
-            print(f"\n{self.t('error')} {self.t('file_not_found')} {filepath} {self.t('file_not_exists')}")
+        # Vérifier que le dossier existe
+        if not os.path.exists(folder_path):
+            print(f"\n{self.t('error')} {self.t('folder_not_found')} {folder_path} {self.t('folder_not_exists')}")
             input(f"\n{self.t('continue')}")
             return False
         
-        if not filepath.endswith('.html'):
-            print(f"\n{self.t('error')} {self.t('file_not_html')}")
+        # Vérifier que c'est un dossier
+        if not os.path.isdir(folder_path):
+            print(f"\n{self.t('error')} {self.t('folder_not_dir')}")
             input(f"\n{self.t('continue')}")
             return False
+        
+        # Vérifier la présence d'index.html à la racine
+        index_path = os.path.join(folder_path, "index.html")
+        if not os.path.exists(index_path):
+            print(f"\n{self.t('index_missing')}")
+            input(f"\n{self.t('continue')}")
+            return False
+        
+        # Scanner tous les fichiers du dossier
+        print(f"\n{self.t('scanning_folder')}")
+        files_to_upload = []
+        
+        for root, dirs, files in os.walk(folder_path):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                # Calculer le chemin relatif depuis le dossier du projet
+                relative_path = os.path.relpath(file_path, folder_path)
+                files_to_upload.append((file_path, relative_path))
+        
+        print(f"✅ {len(files_to_upload)} {self.t('files_found')}")
+        
+        # Préparer les fichiers pour l'upload
+        print(f"\n{self.t('uploading')}")
         
         try:
-            with open(filepath, 'rb') as f:
-                files = {'file': (os.path.basename(filepath), f, 'text/html')}
-                data = {'name': name}
-                
-                response = requests.post(
-                    f"{self.api_url}/api/sites",
-                    headers=self.get_headers(),
-                    files=files,
-                    data=data
-                )
+            # Préparer la liste de fichiers pour requests
+            files_data = []
+            for file_path, relative_path in files_to_upload:
+                with open(file_path, 'rb') as f:
+                    # Lire le contenu du fichier
+                    file_content = f.read()
+                    # Ajouter à la liste (nom du champ, (nom du fichier, contenu, type mime))
+                    files_data.append(('files', (relative_path, file_content)))
+            
+            # Envoyer la requête
+            response = requests.post(
+                f"{self.api_url}/api/sites",
+                headers=self.get_headers(),
+                files=files_data,
+                data={'name': name}
+            )
             
             if response.status_code == 201:
                 result = response.json()
                 print(f"\n✅ {result['message']}")
+                print(f"📁 Fichiers uploadés: {result.get('files_uploaded', 0)}")
                 print(f"🌐 URL: {self.api_url}{result['url']}")
             else:
                 print(f"\n{self.t('error')} {response.json().get('error', 'Unknown error')}")
