@@ -5,16 +5,23 @@ from swiftly.config import DEBUG, HOST, PORT, SITES_FOLDER
 from swiftly.database import init_db
 import os
 
+# Chemin racine du projet (parent du package swiftly)
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 def create_app():
     """Factory pour créer et configurer l'application Flask"""
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(ROOT_DIR, 'templates'),
+        static_folder=os.path.join(ROOT_DIR, 'static')
+    )
     
     # Initialiser les bases de données
     init_db()
     
     # Créer les dossiers nécessaires
-    os.makedirs("db", exist_ok=True)
-    os.makedirs(SITES_FOLDER, exist_ok=True)
+    os.makedirs(os.path.join(ROOT_DIR, "db"), exist_ok=True)
+    os.makedirs(os.path.join(ROOT_DIR, SITES_FOLDER), exist_ok=True)
     
     # Enregistrer les blueprints
     from swiftly.routes.main import main_bp
