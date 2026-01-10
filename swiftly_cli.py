@@ -425,30 +425,57 @@ class SwiftlyCLI:
         try:
             # Préparer la liste de fichiers pour requests
             files_data = []
+            total_size = 0
+            
             for file_path, relative_path in files_to_upload:
                 with open(file_path, 'rb') as f:
                     # Lire le contenu du fichier
                     file_content = f.read()
+                    total_size += len(file_content)
                     # Ajouter à la liste (nom du champ, (nom du fichier, contenu, type mime))
                     files_data.append(('files', (relative_path, file_content)))
             
-            # Envoyer la requête
+            # Afficher la taille totale
+            size_mb = total_size / (1024 * 1024)
+            if size_mb > 1:
+                print(f"📦 Taille totale: {size_mb:.2f} MB")
+            else:
+                print(f"📦 Taille totale: {total_size / 1024:.2f} KB")
+            
+            print(f"⏳ Envoi en cours...")
+            
+            # Envoyer la requête avec timeout plus long pour gros fichiers
+            timeout = 30 if size_mb < 5 else 60
             response = requests.post(
                 f"{self.api_url}/api/sites",
                 headers=self.get_headers(),
                 files=files_data,
-                data={'name': name}
+                data={'name': name},
+                timeout=timeout
             )
             
+            print(f"📡 Réponse reçue (Status: {response.status_code})")
+            
             if response.status_code == 201:
-                result = response.json()
-                print(f"\n✅ {result['message']}")
-                print(f"📁 Fichiers uploadés: {result.get('files_uploaded', 0)}")
-                print(f"🌐 URL: {self.api_url}{result['url']}")
+                try:
+                    result = response.json()
+                    print(f"\n✅ {result['message']}")
+                    print(f"📁 Fichiers uploadés: {result.get('files_uploaded', 0)}")
+                    print(f"🌐 URL: {self.api_url}{result['url']}")
+                except Exception as json_error:
+                    print(f"\n✅ Site déployé (Status: {response.status_code})")
+                    print(f"🌐 URL: {self.api_url}/sites/{name}")
             else:
-                print(f"\n{self.t('error')} {response.json().get('error', 'Unknown error')}")
-        except Exception as e:
+                try:
+                    error_msg = response.json().get('error', 'Unknown error')
+                    print(f"\n{self.t('error')} {error_msg}")
+                except:
+                    print(f"\n{self.t('error')} HTTP {response.status_code}")
+                    print(f"Réponse du serveur: {response.text[:200]}")
+        except requests.exceptions.RequestException as e:
             print(f"\n{self.t('connection_error')} {e}")
+        except Exception as e:
+            print(f"\n{self.t('error')} {type(e).__name__}: {e}")
         
         input(f"\n{self.t('continue')}")
     

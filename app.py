@@ -271,8 +271,13 @@ def serve_site(site_name, subpath=None):
         folder = site_data["folder"]
         site_folder = os.path.join(sites_folder, folder)
         
-        # Si pas de sous-chemin, servir index.html
+        # Si pas de sous-chemin, rediriger vers la version avec slash si nécessaire
         if not subpath:
+            # Vérifier si l'URL se termine par un slash
+            if not request.path.endswith('/'):
+                from flask import redirect
+                return redirect(request.path + '/', code=301)
+            
             index_path = os.path.join(site_folder, "index.html")
             if os.path.exists(index_path):
                 return send_from_directory(site_folder, "index.html")
