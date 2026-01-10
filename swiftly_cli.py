@@ -10,7 +10,7 @@ import requests
 import getpass
 
 CONFIG_FILE = os.path.expanduser("~/.swiftly_config.json")
-DEFAULT_API_URL = "http://localhost:5000"
+DEFAULT_API_URL = "https://swiftly.ruikdev.me"
 
 TRANSLATIONS = {
     "fr": {
