@@ -406,6 +406,25 @@ class SwiftlyCLI:
             input(f"\n{self.t('continue')}")
             return False
         
+        # Vérifier la structure des dossiers requis
+        required_folders = ["css", "js", "images"]
+        missing_folders = []
+        
+        for folder in required_folders:
+            folder_full_path = os.path.join(folder_path, folder)
+            if not os.path.exists(folder_full_path) or not os.path.isdir(folder_full_path):
+                missing_folders.append(folder)
+        
+        if missing_folders:
+            print(f"\n❌ Structure invalide. Dossiers manquants: {', '.join(missing_folders)}")
+            print(f"📁 Structure requise:")
+            print(f"   ├── index.html")
+            print(f"   ├── css/")
+            print(f"   ├── js/")
+            print(f"   └── images/")
+            input(f"\n{self.t('continue')}")
+            return False
+        
         # Scanner tous les fichiers du dossier
         print(f"\n{self.t('scanning_folder')}")
         files_to_upload = []
