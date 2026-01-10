@@ -48,9 +48,26 @@ Perfect for:
 ### Prerequisites
 
 - Python 3.8+
-- pip
 
-### Installation
+### 🚀 Easiest Way (Recommended)
+
+#### On Linux/macOS
+```bash
+./swiftly.sh
+```
+
+#### On Windows
+Double-click `swiftly.bat` or run in Command Prompt:
+```cmd
+swiftly.bat
+```
+
+That's it! The scripts will automatically:
+- ✅ Check Python installation
+- 📦 Install `requests` if needed
+- 🚀 Launch the CLI
+
+### Manual Installation (For Server Setup)
 
 1. **Clone the repository**
 ```bash
