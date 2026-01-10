@@ -12,7 +12,7 @@
 
 Créé à l'origine pour [Flavortown Hack Club](https://flavortown.hackclub.com/) 🍔
 
-[Fonctionnalités](#fonctionnalités) • [Démarrage Rapide](#démarrage-rapide) • [Documentation API](#documentation-api) • [Utilisation CLI](#utilisation-cli)
+[Fonctionnalités](#fonctionnalités) • [Démarrage Rapide](#-démarrage-rapide) • [Documentation API](#-documentation-api) • [Utilisation CLI](#-utilisation-cli)
 
 **[🇬🇧 English Version](README.md)**
 

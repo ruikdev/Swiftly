@@ -151,39 +151,47 @@
                 <div class="lg:w-1/2">
                     <h2 class="text-3xl font-bold tracking-tight mb-6">Deploy from your terminal</h2>
                     <p class="text-slate-400 text-lg mb-8">
-                        Our interactive CLI makes deployment a breeze. Create an account, deploy your sites, and manage everything from your terminal.
+                        Our interactive CLI makes deployment a breeze. Download the script, it handles everything - dependencies, environment setup, and launching the CLI.
                     </p>
                     <div class="flex flex-col gap-4">
                         <div class="flex items-center gap-4">
                             <div class="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold border border-brand-700">1</div>
-                            <span class="text-lg">Install the CLI: <code class="bg-black/30 px-2 py-1 rounded text-brand-300 font-mono">pip install requests</code></span>
+                            <span class="text-lg"><span class="text-slate-300">Linux/macOS:</span> <code class="bg-black/30 px-2 py-1 rounded text-brand-300 font-mono">./swiftly.sh</code></span>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold border border-brand-700">2</div>
-                            <span class="text-lg">Run <code class="bg-black/30 px-2 py-1 rounded text-brand-300 font-mono">python3 swiftly_cli.py</code></span>
+                            <span class="text-lg"><span class="text-slate-300">Windows:</span> <code class="bg-black/30 px-2 py-1 rounded text-brand-300 font-mono">swiftly.bat</code></span>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="w-8 h-8 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 font-bold border border-brand-700">3</div>
                             <span class="text-lg">Create account & deploy your sites</span>
                         </div>
                     </div>
+                    <p class="text-slate-500 text-sm mt-8">✨ Automatically handles: Python check, venv creation, dependencies, CLI download</p>
                 </div>
                 <!-- Terminal Demo -->
                 <div class="lg:w-1/2 w-full">
                     <div class="bg-black rounded-xl p-6 shadow-2xl font-mono text-sm border border-slate-800">
-                        <p class="text-slate-400">$ curl -O https://raw.githubusercontent.com/ruikdev/Swiftly/main/swiftly_cli.py</p>
-                        <p class="text-slate-500">swiftly_cli.py saved</p>
-                        <p class="text-slate-400 mt-2">$ pip install requests</p>
-                        <p class="text-slate-500 mb-2">Successfully installed requests</p>
+                        <p class="text-slate-400">$ ./swiftly.sh</p>
+                        <p class="text-slate-400 mt-2">╔══════════════════════════════════════════════════════════════╗</p>
+                        <p class="text-slate-400">║          🚀 SWIFTLY CLI - Initialisation                     ║</p>
+                        <p class="text-slate-400">╚══════════════════════════════════════════════════════════════╝</p>
                         
-                        <p class="text-slate-400">$ python3 swiftly_cli.py</p>
-                        <p class="text-slate-400 mt-2">╔════════════════════════════════════════╗</p>
-                        <p class="text-slate-400">║        🚀 SWIFTLY CLI                  ║</p>
-                        <p class="text-slate-400">╚════════════════════════════════════════╝</p>
-                        <p class="text-slate-400 mt-2">1. Créer un compte</p>
-                        <p class="text-slate-400">2. Se connecter</p>
-                        <p class="text-slate-400">...</p>
-                        <p class="text-green-400 mt-2">✅ Ready to deploy!</p>
+                        <p class="text-slate-400 mt-2">[1/5] Vérification de Python...</p>
+                        <p class="text-green-400">✅ Python 3.11 trouvé</p>
+                        
+                        <p class="text-slate-400 mt-2">[2/5] Vérification du CLI...</p>
+                        <p class="text-green-400">✅ CLI trouvé localement</p>
+                        
+                        <p class="text-slate-400 mt-2">[3/5] Configuration de l'environnement virtuel...</p>
+                        <p class="text-green-400">✅ Environnement virtuel activé</p>
+                        
+                        <p class="text-slate-400 mt-2">[4/5] Installation des dépendances...</p>
+                        <p class="text-green-400">✅ requests déjà installé</p>
+                        
+                        <p class="text-green-400 mt-4">════════════════════════════════════════════════════════════════</p>
+                        <p class="text-green-400">✅ Initialisation terminée! Lancement du CLI...</p>
+                        <p class="text-green-400">════════════════════════════════════════════════════════════════</p>
                     </div>
                 </div>
             </div>

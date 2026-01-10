@@ -12,7 +12,7 @@
 
 Originally built for [Flavortown Hack Club](https://flavortown.hackclub.com/) 🍔
 
-[Features](#features) • [Quick Start](#quick-start) • [API Documentation](#api-documentation) • [CLI Usage](#cli-usage)
+[Features](#features) • [Quick Start](#-quick-start) • [API Documentation](#-api-documentation) • [CLI Usage](#-cli-usage)
 
 **[🇫🇷 Version Française](README.fr.md)**
 
