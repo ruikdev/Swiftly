@@ -1,0 +1,289 @@
+{% extends "dashboard_layout.html" %}
+
+{% block title %}Déployer un site{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="mb-8">
+        <a href="/dashboard" class="inline-flex items-center gap-2 text-slate-600 hover:text-brand-600 mb-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Retour au dashboard
+        </a>
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">Déployer un nouveau site</h1>
+        <p class="text-slate-600">Uploadez vos fichiers HTML, CSS, JS et images</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+        <form id="deployForm" enctype="multipart/form-data" class="space-y-6">
+            <div>
+                <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Nom du site</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    required
+                    pattern="[a-zA-Z0-9_-]+"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500 focus:ring-opacity-20 transition-colors outline-none"
+                    placeholder="mon-super-site"
+                >
+                <p class="text-xs text-slate-500 mt-1">Lettres, chiffres, tirets et underscores uniquement</p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Fichiers du site</label>
+                <div class="space-y-3">
+                    <!-- Option 1: Sélectionner un dossier -->
+                    <div 
+                        id="dropzoneFolder"
+                        class="border-2 border-dashed border-brand-300 rounded-xl p-8 text-center hover:border-brand-500 transition-colors cursor-pointer bg-brand-50 hover:bg-brand-100"
+                        onclick="document.getElementById('folderInput').click()"
+                    >
+                        <svg class="w-10 h-10 text-brand-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                        <p class="text-brand-900 font-semibold mb-1">📁 Sélectionner un dossier complet</p>
+                        <p class="text-sm text-brand-700">Recommandé - Préserve la structure</p>
+                        <input 
+                            type="file" 
+                            id="folderInput" 
+                            name="files" 
+                            multiple 
+                            webkitdirectory
+                            directory
+                            class="hidden"
+                            onchange="handleFolderUpload(this.files)"
+                        >
+                    </div>
+
+                    <!-- Option 2: Sélectionner des fichiers individuels -->
+                    <div 
+                        id="dropzoneFiles"
+                        class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-brand-500 transition-colors cursor-pointer bg-slate-50 hover:bg-slate-100"
+                        onclick="document.getElementById('filesInput').click()"
+                    >
+                        <svg class="w-8 h-8 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        <p class="text-slate-600 font-medium mb-1">📄 Ou sélectionner des fichiers individuels</p>
+                        <p class="text-xs text-slate-500">Glissez-déposez également supporté</p>
+                        <input 
+                            type="file" 
+                            id="filesInput" 
+                            name="files" 
+                            multiple
+                            class="hidden"
+                            onchange="handleFilesUpload(this.files)"
+                        >
+                    </div>
+                </div>
+                <div id="fileList" class="mt-4 space-y-2"></div>
+                <p class="text-xs text-slate-500 mt-2">⚠️ Votre dossier doit contenir un fichier <code class="bg-slate-100 px-1.5 py-0.5 rounded">index.html</code> à la racine</p>
+            </div>
+
+            <div id="uploadProgress" class="hidden">
+                <div class="bg-brand-50 border border-brand-200 rounded-xl p-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="animate-spin rounded-full h-5 w-5 border-2 border-brand-600 border-t-transparent"></div>
+                        <span class="text-brand-900 font-medium">Déploiement en cours...</span>
+                    </div>
+                    <div class="w-full bg-brand-200 rounded-full h-2">
+                        <div id="progressBar" class="bg-brand-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button 
+                type="submit"
+                id="submitBtn"
+                class="w-full px-6 py-3.5 text-base font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                Déployer le site
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedFiles = [];
+let uploadMode = 'folder'; // 'folder' or 'files'
+
+// Drag & drop sur les deux dropzones
+const dropzoneFolder = document.getElementById('dropzoneFolder');
+const dropzoneFiles = document.getElementById('dropzoneFiles');
+
+[dropzoneFolder, dropzoneFiles].forEach(dropzone => {
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-brand-500', 'bg-brand-100');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-brand-500', 'bg-brand-100');
+    });
+
+    dropzone.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-brand-500', 'bg-brand-100');
+        
+        const items = e.dataTransfer.items;
+        if (items) {
+            const files = [];
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i].webkitGetAsEntry();
+                if (item) {
+                    await traverseFileTree(item, '', files);
+                }
+            }
+            selectedFiles = files;
+            uploadMode = 'folder';
+            displayFiles();
+        }
+    });
+});
+
+// Fonction pour parcourir l'arbre de fichiers (drag & drop de dossier)
+async function traverseFileTree(item, path, files) {
+    return new Promise((resolve) => {
+        if (item.isFile) {
+            item.file((file) => {
+                const newFile = new File([file], path + file.name, { type: file.type });
+                Object.defineProperty(newFile, 'webkitRelativePath', {
+                    value: path + file.name,
+                    writable: false
+                });
+                files.push(newFile);
+                resolve();
+            });
+        } else if (item.isDirectory) {
+            const dirReader = item.createReader();
+            dirReader.readEntries(async (entries) => {
+                for (let i = 0; i < entries.length; i++) {
+                    await traverseFileTree(entries[i], path + item.name + '/', files);
+                }
+                resolve();
+            });
+        }
+    });
+}
+
+function handleFolderUpload(files) {
+    selectedFiles = Array.from(files);
+    uploadMode = 'folder';
+    displayFiles();
+}
+
+function handleFilesUpload(files) {
+    selectedFiles = Array.from(files);
+    uploadMode = 'files';
+    displayFiles();
+}
+
+function displayFiles() {
+    const fileList = document.getElementById('fileList');
+    if (selectedFiles.length === 0) {
+        fileList.innerHTML = '';
+        return;
+    }
+
+    // Détecter si index.html est présent
+    const hasIndex = selectedFiles.some(f => {
+        const path = f.webkitRelativePath || f.name;
+        return path === 'index.html' || path.split('/').pop() === 'index.html';
+    });
+
+    fileList.innerHTML = `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-sm font-medium text-slate-700">${selectedFiles.length} fichier(s) sélectionné(s)</p>
+                ${hasIndex ? 
+                    '<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">✓ index.html trouvé</span>' : 
+                    '<span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">⚠ index.html manquant</span>'
+                }
+            </div>
+            <div class="max-h-48 overflow-y-auto space-y-1">
+                ${selectedFiles.map(f => {
+                    const path = f.webkitRelativePath || f.name;
+                    const isIndex = path === 'index.html' || path.split('/').pop() === 'index.html';
+                    return `
+                        <div class="text-xs text-slate-600 flex items-center gap-2 ${isIndex ? 'bg-green-50 px-2 py-1 rounded' : ''}">
+                            <svg class="w-4 h-4 ${isIndex ? 'text-green-600' : 'text-slate-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                            <span class="${isIndex ? 'font-semibold text-green-900' : ''}">${path}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
+document.getElementById('deployForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    if (!name || selectedFiles.length === 0) {
+        alert('Veuillez remplir tous les champs et sélectionner des fichiers');
+        return;
+    }
+
+    // Vérifier qu'index.html est présent
+    const hasIndex = selectedFiles.some(f => {
+        const path = f.webkitRelativePath || f.name;
+        return path === 'index.html' || path.split('/').pop() === 'index.html';
+    });
+
+    if (!hasIndex) {
+        alert('⚠️ Votre projet doit contenir un fichier index.html à la racine !');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', name);
+
+    // Gérer les chemins relatifs correctement
+    selectedFiles.forEach(file => {
+        let relativePath = file.webkitRelativePath || file.name;
+        
+        // Si c'est un upload de dossier, retirer le nom du dossier parent
+        if (uploadMode === 'folder' && file.webkitRelativePath) {
+            const parts = relativePath.split('/');
+            if (parts.length > 1) {
+                // Enlever le premier segment (nom du dossier sélectionné)
+                relativePath = parts.slice(1).join('/');
+            }
+        }
+        
+        // Créer un nouveau File avec le bon chemin
+        const newFile = new File([file], relativePath, { type: file.type });
+        formData.append('files', newFile, relativePath);
+    });
+
+    // Show progress
+    document.getElementById('uploadProgress').classList.remove('hidden');
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('progressBar').style.width = '30%';
+
+    try {
+        const response = await fetch('/dashboard/deploy', {
+            method: 'POST',
+            body: formData
+        });
+
+        document.getElementById('progressBar').style.width = '90%';
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('progressBar').style.width = '100%';
+            setTimeout(() => {
+                window.location.href = '/dashboard?deployed=' + name;
+            }, 500);
+        } else {
+            throw new Error(data.error || 'Erreur lors du déploiement');
+        }
+    } catch (error) {
+        alert('Erreur: ' + error.message);
+        document.getElementById('uploadProgress').classList.add('hidden');
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('progressBar').style.width = '0%';
+    }
+});
+</script>
+{% endblock %}

@@ -16,6 +16,12 @@ def create_app():
         static_folder=os.path.join(ROOT_DIR, 'static')
     )
     
+    # Configuration des sessions
+    app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+    app.config['SESSION_COOKIE_SECURE'] = False  # True en production avec HTTPS
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    
     # Initialiser les bases de données
     init_db()
     
@@ -23,15 +29,18 @@ def create_app():
     os.makedirs(os.path.join(ROOT_DIR, "db"), exist_ok=True)
     os.makedirs(os.path.join(ROOT_DIR, SITES_FOLDER), exist_ok=True)
     
-    # Enregistrer les blueprints
+    # Enregistrer les blueprints API
     from swiftly.routes.main import main_bp
-    from swiftly.routes.auth import auth_bp
+    from swiftly.routes.auth import auth_bp, auth_web_bp
     from swiftly.routes.user import user_bp
     from swiftly.routes.sites import sites_bp
+    from swiftly.routes.dashboard import dashboard_bp
     
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp)  # API
+    app.register_blueprint(auth_web_bp)  # Web
     app.register_blueprint(user_bp)
     app.register_blueprint(sites_bp)
+    app.register_blueprint(dashboard_bp)  # Dashboard
     
     return app

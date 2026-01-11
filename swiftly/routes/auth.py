@@ -1,6 +1,6 @@
 """Routes d'authentification"""
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, flash
 from swiftly.database import (
     create_user, verify_user, update_user_email, 
     update_user_password, users
@@ -8,6 +8,7 @@ from swiftly.database import (
 from swiftly.utils.decorators import require_auth
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+auth_web_bp = Blueprint('auth_web', __name__, url_prefix='/auth')
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -43,3 +44,58 @@ def login():
         return jsonify(message="Connexion réussie", email=email), 200
     else:
         return jsonify(error="Email ou mot de passe incorrect"), 401
+
+# ========== Routes Web ==========
+
+@auth_web_bp.route('/register', methods=['GET', 'POST'])
+def web_register():
+    """Page d'inscription web"""
+    if request.method == 'GET':
+        return render_template('auth_register.html')
+    
+    email = request.form.get('email')
+    password = request.form.get('password')
+    
+    if not email or not password:
+        flash('Email et mot de passe requis', 'error')
+        return redirect(url_for('auth_web.web_register'))
+    
+    if len(password) < 6:
+        flash('Le mot de passe doit contenir au moins 6 caractères', 'error')
+        return redirect(url_for('auth_web.web_register'))
+    
+    if create_user(email, password):
+        session['email'] = email
+        flash('Compte créé avec succès !', 'success')
+        return redirect(url_for('dashboard.home'))
+    else:
+        flash('Un compte avec cet email existe déjà', 'error')
+        return redirect(url_for('auth_web.web_register'))
+
+@auth_web_bp.route('/login', methods=['GET', 'POST'])
+def web_login():
+    """Page de connexion web"""
+    if request.method == 'GET':
+        return render_template('auth_login.html')
+    
+    email = request.form.get('email')
+    password = request.form.get('password')
+    
+    if not email or not password:
+        flash('Email et mot de passe requis', 'error')
+        return redirect(url_for('auth_web.web_login'))
+    
+    if verify_user(email, password):
+        session['email'] = email
+        flash('Connexion réussie !', 'success')
+        return redirect(url_for('dashboard.home'))
+    else:
+        flash('Email ou mot de passe incorrect', 'error')
+        return redirect(url_for('auth_web.web_login'))
+
+@auth_web_bp.route('/logout')
+def logout():
+    """Déconnexion"""
+    session.pop('email', None)
+    flash('Déconnexion réussie', 'success')
+    return redirect(url_for('main.index'))
