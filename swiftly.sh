@@ -32,29 +32,39 @@ fi
 PYTHON_VERSION=$($PYTHON_CMD --version | cut -d' ' -f2)
 echo -e "${GREEN}✅ Python ${PYTHON_VERSION} trouvé${NC}"
 
-# Vérifier ou télécharger swiftly_cli.py
-echo -e "\n${BLUE}[2/5]${NC} Vérification du CLI..."
+# Mettre à jour swiftly_cli.py depuis GitHub
+echo -e "\n${BLUE}[2/5]${NC} Mise à jour du CLI..."
+
+# Sauvegarder l'ancienne version si elle existe
 if [ -f "$CLI_FILE" ]; then
-    echo -e "${GREEN}✅ CLI trouvé localement${NC}"
+    cp "$CLI_FILE" "${CLI_FILE}.bak" 2>/dev/null || true
+fi
+
+echo -e "${YELLOW}📥 Téléchargement de la dernière version...${NC}"
+
+# Essayer avec curl
+if command -v curl &> /dev/null; then
+    curl -fsSL "$CLI_URL" -o "$CLI_FILE" 2>/dev/null
+# Sinon essayer avec wget
+elif command -v wget &> /dev/null; then
+    wget -q "$CLI_URL" -O "$CLI_FILE" 2>/dev/null
 else
-    echo -e "${YELLOW}📥 Téléchargement du CLI depuis GitHub...${NC}"
-    
-    # Essayer avec curl
-    if command -v curl &> /dev/null; then
-        curl -fsSL "$CLI_URL" -o "$CLI_FILE"
-    # Sinon essayer avec wget
-    elif command -v wget &> /dev/null; then
-        wget -q "$CLI_URL" -O "$CLI_FILE"
-    else
-        echo -e "${RED}❌ curl ou wget n'est pas installé${NC}"
-        echo "Installe curl ou wget pour télécharger le CLI"
-        exit 1
+    echo -e "${YELLOW}⚠️  curl ou wget non trouvé, utilisation de la version locale${NC}"
+    if [ -f "${CLI_FILE}.bak" ]; then
+        mv "${CLI_FILE}.bak" "$CLI_FILE"
     fi
-    
-    if [ -f "$CLI_FILE" ]; then
-        echo -e "${GREEN}✅ CLI téléchargé avec succès${NC}"
+fi
+
+if [ -f "$CLI_FILE" ] && [ -s "$CLI_FILE" ]; then
+    echo -e "${GREEN}✅ CLI à jour${NC}"
+    rm -f "${CLI_FILE}.bak" 2>/dev/null || true
+else
+    echo -e "${YELLOW}⚠️  Échec du téléchargement, restauration de l'ancienne version${NC}"
+    if [ -f "${CLI_FILE}.bak" ]; then
+        mv "${CLI_FILE}.bak" "$CLI_FILE"
+        echo -e "${GREEN}✅ Version locale restaurée${NC}"
     else
-        echo -e "${RED}❌ Erreur lors du téléchargement du CLI${NC}"
+        echo -e "${RED}❌ Aucune version du CLI trouvée${NC}"
         exit 1
     fi
 fi

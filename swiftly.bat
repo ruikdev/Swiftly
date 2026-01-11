@@ -34,26 +34,36 @@ for /f "tokens=*" %%i in ('%PYTHON_CMD% --version') do set PYTHON_VERSION=%%i
 echo ✅ %PYTHON_VERSION% trouvé
 echo.
 
-REM Vérifier ou télécharger swiftly_cli.py
-echo [2/5] Vérification du CLI...
+REM Mettre à jour swiftly_cli.py depuis GitHub
+echo [2/5] Mise à jour du CLI...
+
+REM Sauvegarder l'ancienne version si elle existe
 if exist "%CLI_FILE%" (
-    echo ✅ CLI trouvé localement
-) else (
-    echo 📥 Téléchargement du CLI depuis GitHub...
-    
-    REM Utiliser PowerShell pour télécharger
-    powershell -NoProfile -Command "try { (New-Object Net.WebClient).DownloadFile('%CLI_URL%', '%CLI_FILE%'); exit 0 } catch { exit 1 }"
-    
-    if errorlevel 1 (
-        echo ❌ Erreur lors du téléchargement du CLI
-        echo.
-        echo Assure-toi que tu as une connexion Internet
-        echo.
-        pause
-        exit /b 1
+    copy /Y "%CLI_FILE%" "%CLI_FILE%.bak" >nul 2>&1
+)
+
+echo 📥 Téléchargement de la dernière version...
+
+REM Utiliser PowerShell pour télécharger
+powershell -NoProfile -Command "try { (New-Object Net.WebClient).DownloadFile('%CLI_URL%', '%CLI_FILE%'); exit 0 } catch { exit 1 }" >nul 2>&1
+
+if errorlevel 1 (
+    echo ⚠️  Échec du téléchargement, utilisation de la version locale
+    if exist "%CLI_FILE%.bak" (
+        move /Y "%CLI_FILE%.bak" "%CLI_FILE%" >nul 2>&1
     )
-    
-    echo ✅ CLI téléchargé avec succès
+) else (
+    echo ✅ CLI à jour
+    if exist "%CLI_FILE%.bak" (
+        del /Q "%CLI_FILE%.bak" >nul 2>&1
+    )
+)
+
+if not exist "%CLI_FILE%" (
+    echo ❌ Aucune version du CLI trouvée
+    echo.
+    pause
+    exit /b 1
 )
 echo.
 
