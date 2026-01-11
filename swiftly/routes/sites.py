@@ -4,11 +4,43 @@ from flask import Blueprint, jsonify, request, send_from_directory, abort
 from werkzeug.utils import secure_filename
 import os
 import shutil
+import re
 from swiftly.database import sites, users, add_site_to_db, get_user_sites, delete_site_from_db
 from swiftly.config import SITES_FOLDER
 from swiftly.utils.decorators import require_auth
 
 sites_bp = Blueprint('sites', __name__, url_prefix='/api/sites')
+
+def fix_absolute_paths_in_file(file_path, site_name):
+    """
+    Remplace les chemins absolus du type /sites/*/... par des chemins relatifs
+    dans les fichiers HTML, CSS et JS
+    """
+    if not file_path.endswith(('.html', '.css', '.js')):
+        return
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Pattern pour détecter /sites/quelquechose/chemin
+        pattern = r'/sites/[^/"\'\s]+/'
+        
+        # Vérifier si le pattern existe
+        if re.search(pattern, content):
+            # Remplacer tous les chemins absolus par des chemins relatifs
+            # /sites/xyz/css/style.css -> css/style.css
+            # /sites/xyz/js/app.js -> js/app.js
+            new_content = re.sub(r'/sites/[^/"\'\s]+/', '', content)
+            
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            
+            return True  # Indique qu'une correction a été faite
+    except Exception as e:
+        print(f"Erreur lors de la correction de {file_path}: {e}")
+    
+    return False
 
 @sites_bp.route('', methods=['GET'])
 @require_auth
@@ -83,6 +115,15 @@ def create_site_route(auth_email):
             file.save(file_path)
             uploaded_files.append(relative_path)
         
+        # Corriger automatiquement les chemins absolus dans tous les fichiers
+        fixed_files = []
+        for root, dirs, files in os.walk(site_path):
+            for file in files:
+                file_full_path = os.path.join(root, file)
+                if fix_absolute_paths_in_file(file_full_path, site_folder_name):
+                    rel_path = os.path.relpath(file_full_path, site_path)
+                    fixed_files.append(rel_path)
+        
         # Validation: index.html obligatoire
         if not has_index:
             # Supprimer le dossier créé
@@ -95,13 +136,20 @@ def create_site_route(auth_email):
         # Ajouter le site à la DB
         add_site_to_db(name, site_folder_name, auth_email)
         
-        return jsonify(
-            message=f"Site '{name}' déployé avec succès",
-            site={name: {"folder": site_folder_name, "owner": auth_email}},
-            url=f"/sites/{name}",
-            files_uploaded=len(uploaded_files),
-            files=uploaded_files
-        ), 201
+        response_data = {
+            "message": f"Site '{name}' déployé avec succès",
+            "site": {name: {"folder": site_folder_name, "owner": auth_email}},
+            "url": f"/sites/{name}",
+            "files_uploaded": len(uploaded_files),
+            "files": uploaded_files
+        }
+        
+        # Ajouter un avertissement si des chemins ont été corrigés
+        if fixed_files:
+            response_data["warning"] = "Chemins absolus détectés et automatiquement convertis en chemins relatifs"
+            response_data["fixed_files"] = fixed_files
+        
+        return jsonify(response_data), 201
     
     except Exception as e:
         # En cas d'erreur, nettoyer le dossier

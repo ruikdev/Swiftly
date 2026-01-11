@@ -3,7 +3,7 @@
 from flask import Blueprint, render_template, jsonify, request, send_from_directory, abort
 import os
 from swiftly.config import SITES_FOLDER
-from swiftly.database import sites
+from swiftly.database import load_sites
 
 main_bp = Blueprint('main', __name__)
 
@@ -22,6 +22,9 @@ def health():
 @main_bp.route('/sites/<site_name>/<path:subpath>')
 def serve_site(site_name, subpath=None):
     """Servir les fichiers d'un site depuis son dossier dédié"""
+    # Recharger les sites depuis la DB pour avoir les données à jour
+    sites = load_sites()
+    
     # Vérifier si le site existe dans la DB
     if site_name not in sites:
         abort(404, description=f"Le site '{site_name}' n'existe pas")
@@ -31,7 +34,7 @@ def serve_site(site_name, subpath=None):
     # Nouveau format: dossier dédié
     if isinstance(site_data, dict) and "folder" in site_data:
         folder = site_data["folder"]
-        site_folder = os.path.join(SITES_FOLDER, folder)
+        site_folder = os.path.abspath(os.path.join(SITES_FOLDER, folder))
         
         # Si pas de sous-chemin, rediriger vers la version avec slash si nécessaire
         if not subpath:
@@ -50,7 +53,9 @@ def serve_site(site_name, subpath=None):
         file_path = os.path.join(site_folder, subpath)
         if os.path.exists(file_path) and os.path.isfile(file_path):
             # Sécurité: vérifier qu'on ne sort pas du dossier du site
-            if os.path.commonpath([site_folder]) == os.path.commonpath([site_folder, file_path]):
+            real_site_folder = os.path.realpath(site_folder)
+            real_file_path = os.path.realpath(file_path)
+            if real_file_path.startswith(real_site_folder):
                 return send_from_directory(site_folder, subpath)
         
         abort(404, description=f"Fichier '{subpath}' introuvable")
