@@ -38,6 +38,8 @@ Perfect for:
 - **🚀 Simple API** - Upload and deploy HTML files via REST API
 - **💻 CLI Tool** - Command-line interface for easy deployment
 - **📦 File Upload** - Direct HTML file upload support
+ - **📦 File & Directory Upload** - Direct HTML file upload and full directory upload (preserves structure)
+ - **📊 Dashboard UI** - Web interface for managing sites (login, deploy, delete)
 - **🗂️ Site Management** - List, add, and delete sites easily
 - **🔒 Secure** - File name sanitization and validation
 - **📊 JSON Database** - Simple file-based storage
@@ -92,6 +94,19 @@ python app.py
 ```
 
 The server will start on `http://localhost:5000` 🎉
+
+## 🖥️ Dashboard Web
+
+Swiftly now includes a web dashboard to manage your sites without the CLI.
+
+- **URL**: `http://localhost:5000/dashboard`
+- **Features**:
+  - Login / Register from the browser
+  - List your sites (preview, file count)
+  - Deploy via a form (upload full folder or individual files)
+  - Delete sites
+
+The dashboard uses Tailwind and matches the landing page style. To use it, start the server (`python app.py`) and open the URL above. The deploy form supports drag & drop of folders and validates the presence of an `index.html`.
 
 ## 🔌 API Documentation
 
@@ -323,7 +338,7 @@ You can modify these in [app.py](app.py).
 - [ ] SSL/TLS certificates automation
 - [ ] Multi-file site deployment (entire directories)
 - [ ] Git integration for automatic deployments
-- [ ] Dashboard UI for site management
+- [x] Dashboard UI for site management
 - [ ] Environment variables support
 - [ ] Site analytics
 - [ ] CDN integration

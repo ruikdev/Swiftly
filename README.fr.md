@@ -38,6 +38,8 @@ Parfait pour :
 - **🚀 API Simple** - Uploadez et déployez des fichiers HTML via l'API REST
 - **💻 Outil CLI** - Interface en ligne de commande pour un déploiement facile
 - **📦 Upload de Fichiers** - Support de l'upload direct de fichiers HTML
+ - **📦 Upload de Fichiers et Dossiers** - Support de l'upload direct de fichiers HTML et upload de dossiers complets (préserve l'arborescence)
+ - **📊 Interface Dashboard** - Gestion via une interface web (connexion, déploiement, suppression)
 - **🗂️ Gestion de Sites** - Listez, ajoutez et supprimez des sites facilement
 - **🔒 Sécurisé** - Validation et sécurisation des noms de fichiers
 - **📊 Base de Données JSON** - Stockage simple basé sur des fichiers
@@ -92,6 +94,19 @@ python app.py
 ```
 
 Le serveur démarrera sur `http://localhost:5000` 🎉
+
+## 🖥️ Dashboard Web
+
+Swiftly inclut désormais une interface web pour gérer vos sites sans passer par le CLI.
+
+- **URL**: `http://localhost:5000/dashboard`
+- **Fonctionnalités**:
+  - Connexion / Inscription via le navigateur
+  - Liste de vos sites (aperçu, nombre de fichiers)
+  - Déploiement via formulaire (upload de dossier complet ou fichiers individuels)
+  - Suppression de site
+
+Le dashboard conserve la même charte visuelle que la page d'accueil (Tailwind). Pour l'utiliser, démarrez le serveur (`python app.py`) puis rendez-vous sur l'URL ci-dessus. Le formulaire de déploiement gère maintenant le drag & drop de dossiers et vérifie la présence d'un `index.html`.
 
 ## 🔌 Documentation API
 
@@ -367,7 +382,7 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [x] Upload de fichiers via API
 - [x] Système d'authentification utilisateur
 - [x] Fonctionnalités de sécurité améliorées
-- [ ] Interface Dashboard pour la gestion des sites
+- [x] Interface Dashboard pour la gestion des sites
 
 ## 🤝 Contribuer
 
