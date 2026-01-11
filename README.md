@@ -336,6 +336,7 @@ You can modify these in [app.py](app.py).
 - [x] File upload via API
 - [x] User authentication system
 - [x] Enhanced security features
+- [ ] Dashboard UI for site management
 
 ## 🤝 Contributing
 

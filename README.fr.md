@@ -355,7 +355,6 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [ ] Automatisation des certificats SSL/TLS
 - [ ] Déploiement multi-fichiers (répertoires entiers)
 - [ ] Intégration Git pour déploiements automatiques
-- [ ] Interface Dashboard pour la gestion des sites
 - [ ] Support des variables d'environnement
 - [ ] Analytiques de site
 - [ ] Intégration CDN
@@ -368,6 +367,7 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [x] Upload de fichiers via API
 - [x] Système d'authentification utilisateur
 - [x] Fonctionnalités de sécurité améliorées
+- [ ] Interface Dashboard pour la gestion des sites
 
 ## 🤝 Contribuer
 
