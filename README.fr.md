@@ -334,14 +334,38 @@ python cli_api_test.py help
 
 ```
 Swiftly/
-├── app.py                 # Application Flask principale
-├── cli_api_test.py        # Outil CLI pour tester
-├── requirements.txt       # Dépendances Python
+├── app.py                      # Application Flask principale
+├── swiftly_cli.py              # Script CLI interactif
+├── swiftly.sh                  # Installateur / lanceur (Linux/macOS)
+├── swiftly.bat                 # Installateur / lanceur (Windows)
+├── requirements.txt            # Dépendances Python
 ├── db/
-│   └── sites.json        # Base de données des sites
-├── sites/                # Fichiers HTML déployés
-├── templates/
-│   └── base.html         # Page d'accueil
+│   ├── sites.json              # Base de données des sites (local)
+│   └── users.json              # Base de données des utilisateurs (local)
+├── sites/                      # Dossiers des sites déployés
+├── templates/                  # Templates Jinja2
+│   ├── base.html
+│   ├── dashboard_layout.html
+│   ├── auth_login.html
+│   ├── auth_register.html
+│   ├── dashboard_home.html
+│   ├── dashboard_deploy.html
+│   └── dashboard_profile.html
+├── swiftly/                    # Package principal
+│   ├── __init__.py
+│   ├── config.py
+│   ├── database.py
+│   ├── models/
+│   │   ├── site.py
+│   │   └── user.py
+│   ├── routes/
+│   │   ├── main.py
+│   │   ├── auth.py
+│   │   ├── sites.py
+│   │   ├── user.py
+│   │   └── dashboard.py
+│   └── utils/
+│       └── decorators.py
 └── README.md
 ```
 

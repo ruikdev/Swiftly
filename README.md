@@ -302,15 +302,39 @@ Swiftly comes with a powerful CLI tool for testing and managing your deployments
 
 ```
 Swiftly/
-├── app.py                 # Main Flask application
-├── cli_api_test.py        # CLI tool for testing
-├── requirements.txt       # Python dependencies
+├── app.py                      # Main Flask application
+├── swiftly_cli.py              # Interactive CLI script
+├── swiftly.sh                  # Installer / launcher (Linux/macOS)
+├── swiftly.bat                 # Installer / launcher (Windows)
+├── requirements.txt            # Python dependencies
 ├── db/
-│   └── sites.json        # Site database
-├── sites/                # Deployed HTML files
-├── templates/
-│   └── base.html         # Landing page
-└── README.md
+│   ├── sites.json              # Site database (local)
+│   └── users.json              # Users database (local)
+├── sites/                      # Deployed site folders
+├── templates/                  # Jinja2 templates
+│   ├── base.html
+│   ├── dashboard_layout.html
+│   ├── auth_login.html
+│   ├── auth_register.html
+│   ├── dashboard_home.html
+│   ├── dashboard_deploy.html
+│   └── dashboard_profile.html
+├── swiftly/                    # Main package
+│   ├── __init__.py
+│   ├── config.py
+│   ├── database.py
+│   ├── models/
+│   │   ├── site.py
+│   │   └── user.py
+│   ├── routes/
+│   │   ├── main.py
+│   │   ├── auth.py
+│   │   ├── sites.py
+│   │   ├── user.py
+│   │   └── dashboard.py
+│   └── utils/
+│       └── decorators.py
+└── README.fr.md
 ```
 
 ## 🛠️ Configuration
@@ -352,6 +376,7 @@ You can modify these in [app.py](app.py).
 - [x] User authentication system
 - [x] Enhanced security features
 - [ ] Dashboard UI for site management
+ - [x] Dashboard UI for site management
 
 ## 🤝 Contributing
 
