@@ -328,14 +328,14 @@ You can modify these in [app.py](app.py).
 - [ ] Site analytics
 - [ ] CDN integration
 - [ ] Webhook support for CI/CD
-- [ ] User authentication system
-- [ ] Enhanced security features
 
 ### In Progress
 - [x] Basic HTML file deployment
 - [x] REST API
 - [x] CLI tool
 - [x] File upload via API
+- [x] User authentication system
+- [x] Enhanced security features
 
 ## 🤝 Contributing
 

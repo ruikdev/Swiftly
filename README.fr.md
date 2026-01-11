@@ -360,14 +360,14 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [ ] Analytiques de site
 - [ ] Intégration CDN
 - [ ] Support des webhooks pour CI/CD
-- [ ] Système d'authentification utilisateur
-- [ ] Fonctionnalités de sécurité améliorées
 
 ### En Cours
 - [x] Déploiement basique de fichiers HTML
 - [x] API REST
 - [x] Outil CLI
 - [x] Upload de fichiers via API
+- [x] Système d'authentification utilisateur
+- [x] Fonctionnalités de sécurité améliorées
 
 ## 🤝 Contribuer
 
