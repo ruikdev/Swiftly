@@ -20,7 +20,7 @@ TRANSLATIONS = {
         "main_menu": "📋 MENU PRINCIPAL:",
         "register": "1. Créer un compte",
         "login": "2. Se connecter",
-        "check_api": "3. Vérifier l'API (health)",
+        "check_api": "8. Vérifier l'API (health)",
         "quit": "0. Quitter",
         "profile": "1. Voir mon profil",
         "list_sites": "2. Lister mes sites",
@@ -83,7 +83,7 @@ TRANSLATIONS = {
         "main_menu": "📋 MAIN MENU:",
         "register": "1. Create an account",
         "login": "2. Login",
-        "check_api": "3. Check API (health)",
+        "check_api": "8. Check API (health)",
         "quit": "0. Quit",
         "profile": "1. View my profile",
         "list_sites": "2. List my sites",
@@ -236,7 +236,7 @@ class SwiftlyCLI:
             print("  " + self.t("update_email"))
             print("  " + self.t("update_password"))
             print("  " + self.t("logout"))
-            print("  " + self.t("check_api"))
+            print("  8. " + self.t("check_api"))
             print("  9. " + self.t("change_lang"))
             print("  " + self.t("quit"))
         
