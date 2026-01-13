@@ -1,136 +1,149 @@
-# Configuration Automatisée des Domaines (Namecheap) - Swiftly
+# Configuration des Sous-Domaines Automatiques (Wildcard) - Swiftly
 
 ## 📋 Vue d'ensemble
 
-Ce document explique le fonctionnement du système de domaines personnalisés **100% automatisé**. 
-En tant qu'utilisateur, vous n'avez qu'une seule action à faire : ajouter le domaine via le CLI ou l'API.
+Ce document explique comment configurer Swiftly pour que chaque site déployé obtienne **automatiquement et instantanément** son propre sous-domaine.
 
-Swiftly s'occupe automatiquement (via des scripts en arrière-plan) de :
-1.  📡 Configurer le DNS chez Namecheap (A Record).
-2.  🔐 Générer et installer le certificat SSL (Let's Encrypt).
-3.  ⚙️ Configurer Nginx pour le routage.
+Exemple : 
+*   Site déployé : `mon-projet`
+*   URL générée : `mon-projet.swiftly.ruikdev.me` (ou votre propre sous-domaine)
 
-## 🔄 Architecture Automatisée
+Contrairement aux domaines personnalisés externes, ici **aucune action n'est requise** à chaque déploiement. L'infrastructure est prête à accueillir n'importe quel nom de site.
+
+## 🔄 Comment ça fonctionne (La méthode Wildcard)
+
+Au lieu de créer un enregistrement DNS pour chaque site via l'API (ce qui serait lent à propager), nous utilisons une entrée **Wildcard DNS**.
 
 ```
-┌─────────────────┐      1. Requête API        ┌──────────────────────┐
-│  Utilisateur    │ ─────────────────────────> │      Swiftly API     │
-└─────────────────┘      (Ajout domaine)       │  (Task Queue Async)  │
-                                               └──────────┬───────────┘
-                                                          │
-         ┌────────────────────────────────────────────────┘
-         │
-         ▼
-┌──────────────────────┐      2. API Call       ┌──────────────────────┐
-│  Configurateur DNS   │ ─────────────────────> │   Namecheap API      │
-│  (Python Script)     │ <───────────────────── │ (Update A Record)    │
-└──────────────────────┘      Confirm OK        └──────────────────────┘
-         │
-         │ 3. Attente propagation (polling)
-         ▼
-┌──────────────────────┐      4. Shell Cmd      ┌──────────────────────┐
-│  Configurateur SSL   │ ─────────────────────> │  Certbot & Nginx     │
-│  (Sudo Wrapper)      │                        │ (Gen Cert + Reload)  │
-└──────────────────────┘                        └──────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                  DNS (Namecheap)                           │
+│  Record: *.swiftly  ───A───>  IP_DU_SERVEUR                │
+└──────────────────────────┬─────────────────────────────────┘
+                           │
+             ┌─────────────▼──────────────┐
+             │   Tout trafic *.swiftly    │
+             │   arrive ici               │
+             └─────────────┬──────────────┘
+                           │
+             ┌─────────────▼──────────────┐
+             │   Nginx (Reverse Proxy)    │
+             │   Server: *.swiftly...     │
+             │   RegEx extrait le nom     │
+             └─────────────┬──────────────┘
+                           │
+             ┌─────────────▼──────────────┐
+             │   Swiftly API              │
+             │   Serve /sites/mon-projet  │
+             └────────────────────────────┘
 ```
 
-## ⚙️ Configuration Serveur (Admin)
+### Avantages
+1.  **Instantané** : Le sous-domaine marche dès la seconde où le site est créé.
+2.  **Zéro API Call** : Pas besoin d'appeler Namecheap à chaque création de site.
+3.  **Certificat Unique** : Un seul certificat SSL Wildcard couvre tout.
 
-Pour que l'automatisation fonctionne, le serveur Swiftly doit être configuré avec les accès Namecheap.
+## ⚙️ Configuration Requise (Admin)
 
-### 1. Variables d'environnement / Config
+### 1. Configuration DNS (Namecheap)
 
-Ajoutez ces configurations dans `swiftly/config.py` ou `.env` :
+Connectez-vous à votre panel Namecheap et ajoutez **une seule fois** cet enregistrement pour votre domaine principal (ex: `ruikdev.me`) :
 
-```python
-# Configuration Namecheap
-NAMECHEAP_API_USER = "votre_username"
-NAMECHEAP_API_KEY = "votre_api_key"
-NAMECHEAP_USERNAME = "votre_username"
-NAMECHEAP_CLIENT_IP = "IP_DE_VOTRE_SERVEUR"  # Doit être whitelistée chez Namecheap
-NAMECHEAP_SANDBOX = False  # True pour tester
+| Type | Host | Value | TTL |
+|------|------|-------|-----|
+| A Record | *.swiftly | 123.456.789.000 (Ip Serveur) | Automatic |
 
-# Configuration Serveur
-SERVER_PUBLIC_IP = "XXX.XXX.XXX.XXX"  # L'IP vers laquelle Pointer les DNS
-```
+*(Si votre base est juste `ruikdev.me` directement, mettez `*` dans Host)*
 
-### 2. Permissions Système
+### 2. Configuration SSL Wildcard (Certbot + Namecheap)
 
-Le processus web (Flask) a besoin de droits spécifiques pour recharger Nginx et lancer Certbot. 
-Ajoutez ceci au fichier `/etc/sudoers` :
+Pour avoir HTTPS sur `*.swiftly.ruikdev.me`, il faut un certificat Wildcard. Cela requiert une validation DNS (d'où le besoin de l'API Namecheap).
 
-```bash
-# Autoriser l'utilisateur 'swiftly_user' à lancer le script d'auto-config
-swiftly_user ALL=(root) NOPASSWD: /usr/bin/certbot, /usr/sbin/nginx, /path/to/swiftly/scripts/configure_domain.sh
+1.  **Installer le plugin Namecheap pour Certbot :**
+    ```bash
+    sudo pip install certbot-dns-namecheap
+    ```
+
+2.  **Créer un fichier de credentials `namecheap.ini` :**
+    ```ini
+    dns_namecheap_username = votre_username
+    dns_namecheap_api_key = votre_api_key
+    ```
+    *Note: Sécurisez ce fichier (`chmod 600`).*
+
+3.  **Générer le certificat :**
+    ```bash
+    sudo certbot certonly \
+      --dns-namecheap \
+      --dns-namecheap-credentials /path/to/namecheap.ini \
+      -d 'swiftly.ruikdev.me' \
+      -d '*.swiftly.ruikdev.me'
+    ```
+
+Cette commande créera un certificat valide pour `tout-ce-que-vous-voulez.swiftly.ruikdev.me`.
+
+### 3. Configuration Nginx
+
+Modifiez votre configuration Nginx pour intercepter tous les sous-domaines dynamiquement.
+
+```nginx
+# /etc/nginx/sites-available/swiftly_wildcard
+
+server {
+    listen 443 ssl http2;
+    server_name ~^(?<site_name>.+)\.swiftly\.ruikdev\.me$;
+
+    # Certificat Wildcard
+    ssl_certificate /etc/letsencrypt/live/swiftly.ruikdev.me/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/swiftly.ruikdev.me/privkey.pem;
+
+    # Logs séparés (optionnel)
+    access_log /var/log/nginx/swiftly_access.log;
+    error_log /var/log/nginx/swiftly_error.log;
+
+    location / {
+        # Proxy vers Swiftly en injectant le nom du site
+        proxy_pass http://127.0.0.1:5000/sites/$site_name/;
+        
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        
+        # Gestion des erreurs si le site n'existe pas
+        proxy_intercept_errors on;
+        error_page 404 = @not_found;
+    }
+
+    location @not_found {
+        return 404 "Site introuvable ou non déployé sur Swiftly.";
+    }
+}
+
+# Redirection HTTP -> HTTPS
+server {
+    listen 80;
+    server_name *.swiftly.ruikdev.me;
+    return 301 https://$host$request_uri;
+}
 ```
 
 ## 🚀 Utilisation (Pour l'utilisateur)
 
-### Ajouter un domaine (C'est tout !)
+**Absolument rien à faire !**
 
-C'est la seule étape requise.
+Dès qu'un utilisateur crée un site nommé `super-app` :
+1.  Swiftly crée le dossier `/sites/super-app`.
+2.  L'utilisateur peut immédiatement aller sur `https://super-app.swiftly.ruikdev.me`.
+3.  Le DNS Wildcard dirige vers le serveur.
+4.  Le Certificat Wildcard sécurise la connexion.
+5.  Nginx extrait `super-app` et demande le contenu à Swiftly.
 
-**Via CLI :**
-```bash
-python swiftly_cli.py
-# Menu → 8. Configurer Domaines Personnalisés
-# Entrer: mon-super-site.com
-```
+## ✅ Checklist Mise en Place
 
-**Via API :**
-```bash
-POST /api/sites/mon-site/domains
-{
-  "domain": "mon-super-site.com"
-}
-```
-
----
-*Une fois la commande lancée, le statut du domaine passera de `PENDING` à `ACTIVE` en quelques minutes (temps de propagation DNS et génération SSL).*
----
-
-## 🛠 Ce que fait le code en arrière-plan
-
-Dès réception de la demande, Swiftly exécute la séquence suivante :
-
-### 1. Automatisation DNS (Namecheap)
-Le système utilise l'API `namecheap.domains.dns.setHosts` pour :
-*   Récupérer les enregistrements existants du domaine.
-*   Ajouter un enregistrement `A` (`@`) pointant vers `SERVER_PUBLIC_IP`.
-*   Ajouter un enregistrement `CNAME` (`www`) pointant vers `mon-super-site.com`.
-
-### 2. Automatisation SSL & Nginx
-Une fois le DNS propagé (vérification par boucle de test DNS locale), le système :
-*   Appelle Certbot : `certbot certonly --nginx -d mon-super-site.com --non-interactive`
-*   Crée/Met à jour le fichier de config Nginx `/etc/nginx/sites-available/swiftly_custom_domains` :
-    ```nginx
-    server {
-        listen 443 ssl;
-        server_name mon-super-site.com;
-        ssl_certificate /etc/letsencrypt/live/mon-super-site.com/fullchain.pem;
-        # ... options SSL ...
-        location / {
-            proxy_pass http://127.0.0.1:5000/sites/mon-site/;
-        }
-    }
-    ```
-*   Recharge Nginx : `sudo nginx -s reload`
-
-## 📡 Statuts du domaine
-
-L'API retourne l'état de la configuration :
-
-*   **PENDING_DNS** : En attente de propagation DNS.
-*   **PENDING_SSL** : DNS OK, en attente de génération du certificat.
-*   **ACTIVE** : Domaine opérationnel et sécurisé.
-*   **ERROR** : Une intervention manuelle est requise (voir logs).
-
-## ⚠️ Limitations & Sécurité
-
-1.  **Whitelist IP** : Votre IP serveur DOIT être whitelistée dans le panel Namecheap API.
-2.  **Temps d'attente** : La propagation DNS peut prendre de 1 à 30 minutes. L'utilisateur doit être prévenu.
-3.  **Rate Limits** : Attention aux limites de l'API Namecheap et de Let's Encrypt (5 certificats par semaine pour le même domaine racine).
+- [ ] DNS Wildcard (`*.votresousdomaine`) pointé vers l'IP.
+- [ ] API Key Namecheap activée et IP whitelistée (pour Certbot).
+- [ ] Certificat SSL Wildcard généré avec `certbot-dns-namecheap`.
+- [ ] Config Nginx avec Regex `server_name` en place.
 
 ---
 
-**Version:** 2.0 (Auto-Pilot) | **Date:** Jan 2026
+**Version:** 3.0 (Wildcard Subdomains) | **Date:** Jan 2026
