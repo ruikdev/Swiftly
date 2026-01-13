@@ -16,7 +16,7 @@ Au lieu de créer un enregistrement DNS pour chaque site via l'API (ce qui serai
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│                  DNS (Namecheap)                           │
+│                  DNS (Cloudflare)                          │
 │  Record: *.swiftly  ───A───>  IP_DU_SERVEUR                │
 └──────────────────────────┬─────────────────────────────────┘
                            │
@@ -44,42 +44,54 @@ Au lieu de créer un enregistrement DNS pour chaque site via l'API (ce qui serai
 
 ## ⚙️ Configuration Requise (Admin)
 
-### 1. Configuration DNS (Namecheap)
+### 1. Configuration DNS (Cloudflare)
 
-Connectez-vous à votre panel Namecheap et ajoutez **une seule fois** cet enregistrement pour votre domaine principal (ex: `ruikdev.me`) :
+Allez dans Cloudflare → **DNS** et ajoutez **une seule fois** cet enregistrement pour votre domaine principal (ex: `ruikdev.me`) :
 
-| Type | Host | Value | TTL |
-|------|------|-------|-----|
-| A Record | *.swiftly | 123.456.789.000 (Ip Serveur) | Automatic |
+| Type | Name | Content | TTL | Proxy |
+|------|------|---------|-----|-------|
+| A Record | *.swiftly | 123.456.789.000 (IP Serveur) | Automatic | DNS Only (Nuage gris) |
 
-*(Si votre base est juste `ruikdev.me` directement, mettez `*` dans Host)*
+*(Si votre base est `ruikdev.me` directement, mettez `*` dans Name.)*
 
-### 2. Configuration SSL Wildcard (Certbot + Namecheap)
+Note importante : laissez le statut en **DNS Only** (nuage gris). Si vous activez le proxy Cloudflare (nuage orange), les certificats et le routage ne fonctionneront pas correctement pour `*.swiftly.ruikdev.me`.
 
-Pour avoir HTTPS sur `*.swiftly.ruikdev.me`, il faut un certificat Wildcard. Cela requiert une validation DNS (d'où le besoin de l'API Namecheap).
+### 2. Configuration SSL Wildcard (Certbot + Cloudflare)
 
-1.  **Installer le plugin Namecheap pour Certbot :**
+Puisque Cloudflare gère maintenant vos DNS, utilisez le plugin Cloudflare pour Certbot afin d'obtenir un certificat Let's Encrypt valide pour `swiftly.ruikdev.me` et `*.swiftly.ruikdev.me` :
+
+1.  **Installer le plugin Cloudflare pour Certbot :**
     ```bash
-    sudo pip install certbot-dns-namecheap
+    sudo apt-get update
+    sudo apt-get install -y python3-certbot-dns-cloudflare
+    # ou via pip si besoin
+    sudo pip install certbot-dns-cloudflare
     ```
 
-2.  **Créer un fichier de credentials `namecheap.ini` :**
+2.  **Créer un API Token Cloudflare :**
+    * Cloudflare → Mon profil → API Tokens → Create Token
+    * Choisissez le template **"Edit zone DNS"** et limitez-le au ou aux zones nécessaires.
+
+3.  **Créer le fichier de credentials :**
     ```ini
-    dns_namecheap_username = votre_username
-    dns_namecheap_api_key = votre_api_key
+    # ~/.secrets/certbot/cloudflare.ini
+    dns_cloudflare_api_token = VOTRE_TOKEN_ICI
     ```
-    *Note: Sécurisez ce fichier (`chmod 600`).*
+    Puis sécurisez le fichier :
+    ```bash
+    chmod 600 ~/.secrets/certbot/cloudflare.ini
+    ```
 
-3.  **Générer le certificat :**
+4.  **Générer le certificat :**
     ```bash
     sudo certbot certonly \
-      --dns-namecheap \
-      --dns-namecheap-credentials /path/to/namecheap.ini \
+      --dns-cloudflare \
+      --dns-cloudflare-credentials ~/.secrets/certbot/cloudflare.ini \
       -d 'swiftly.ruikdev.me' \
       -d '*.swiftly.ruikdev.me'
     ```
 
-Cette commande créera un certificat valide pour `tout-ce-que-vous-voulez.swiftly.ruikdev.me`.
+Après exécution, Certbot indiquera le chemin des certificats (généralement `/etc/letsencrypt/live/swiftly.ruikdev.me/`).
 
 ### 3. Configuration Nginx
 
@@ -139,9 +151,9 @@ Dès qu'un utilisateur crée un site nommé `super-app` :
 
 ## ✅ Checklist Mise en Place
 
-- [ ] DNS Wildcard (`*.votresousdomaine`) pointé vers l'IP.
-- [ ] API Key Namecheap activée et IP whitelistée (pour Certbot).
-- [ ] Certificat SSL Wildcard généré avec `certbot-dns-namecheap`.
+- [ ] DNS Wildcard (`*.votresousdomaine`) pointé vers l'IP (Cloudflare, `DNS Only`).
+- [ ] API Token Cloudflare créé et fichier de credentials configuré.
+- [ ] Certificat SSL Wildcard généré avec `certbot-dns-cloudflare`.
 - [ ] Config Nginx avec Regex `server_name` en place.
 
 ---
