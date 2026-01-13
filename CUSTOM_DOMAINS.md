@@ -1,366 +1,136 @@
-# Configuration des Domaines Personnalisés - Swiftly
+# Configuration Automatisée des Domaines (Namecheap) - Swiftly
 
 ## 📋 Vue d'ensemble
 
-Ce document explique comment configurer et utiliser les domaines personnalisés dans Swiftly. Au lieu de servir vos sites uniquement via `swiftly.ruikdev.me/sites/lesite`, vous pouvez associer vos propres domaines (ex: `mon-site.fr`) qui redirigent automatiquement vers votre site Swiftly.
+Ce document explique le fonctionnement du système de domaines personnalisés **100% automatisé**. 
+En tant qu'utilisateur, vous n'avez qu'une seule action à faire : ajouter le domaine via le CLI ou l'API.
 
-## 🔄 Comment ça fonctionne
+Swiftly s'occupe automatiquement (via des scripts en arrière-plan) de :
+1.  📡 Configurer le DNS chez Namecheap (A Record).
+2.  🔐 Générer et installer le certificat SSL (Let's Encrypt).
+3.  ⚙️ Configurer Nginx pour le routage.
 
-### Architecture
+## 🔄 Architecture Automatisée
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Votre Domaine                            │
-│                      mon-site.fr                                │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │ DNS A Record pointant vers votre serveur (même IP)     │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                           │                                     │
-│                           ↓                                     │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │ Nginx Reverse Proxy (Écoute mon-site.fr)              │  │
-│  │ Rewrite: mon-site.fr/* → /sites/mon-site/*            │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                           │                                     │
-│                           ↓                                     │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │ Swiftly API                                            │  │
-│  │ GET /sites/mon-site/index.html                         │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                           │                                     │
-│                           ↓                                     │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │ Fichiers du site stockés dans /sites/mon-site/        │  │
-│  └─────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────┐      1. Requête API        ┌──────────────────────┐
+│  Utilisateur    │ ─────────────────────────> │      Swiftly API     │
+└─────────────────┘      (Ajout domaine)       │  (Task Queue Async)  │
+                                               └──────────┬───────────┘
+                                                          │
+         ┌────────────────────────────────────────────────┘
+         │
+         ▼
+┌──────────────────────┐      2. API Call       ┌──────────────────────┐
+│  Configurateur DNS   │ ─────────────────────> │   Namecheap API      │
+│  (Python Script)     │ <───────────────────── │ (Update A Record)    │
+└──────────────────────┘      Confirm OK        └──────────────────────┘
+         │
+         │ 3. Attente propagation (polling)
+         ▼
+┌──────────────────────┐      4. Shell Cmd      ┌──────────────────────┐
+│  Configurateur SSL   │ ─────────────────────> │  Certbot & Nginx     │
+│  (Sudo Wrapper)      │                        │ (Gen Cert + Reload)  │
+└──────────────────────┘                        └──────────────────────┘
 ```
 
-### Points clés
+## ⚙️ Configuration Serveur (Admin)
 
-1. **Swiftly stocke les domaines** — Chaque site peut avoir plusieurs domaines associés
-2. **Nginx fait le routage** — Nginx reçoit les requêtes sur les domaines perso et les redirige via reverse proxy
-3. **DNS pointe vers votre serveur** — Tous les domaines perso pointent vers la même IP que `swiftly.ruikdev.me`
-4. **URLs parallèles** — `/sites/lesite` ET `lesite.com` accèdent au même contenu
+Pour que l'automatisation fonctionne, le serveur Swiftly doit être configuré avec les accès Namecheap.
 
-## 🚀 Démarrage rapide
+### 1. Variables d'environnement / Config
 
-### 1️⃣ Ajouter un domaine à votre site (CLI)
+Ajoutez ces configurations dans `swiftly/config.py` ou `.env` :
 
+```python
+# Configuration Namecheap
+NAMECHEAP_API_USER = "votre_username"
+NAMECHEAP_API_KEY = "votre_api_key"
+NAMECHEAP_USERNAME = "votre_username"
+NAMECHEAP_CLIENT_IP = "IP_DE_VOTRE_SERVEUR"  # Doit être whitelistée chez Namecheap
+NAMECHEAP_SANDBOX = False  # True pour tester
+
+# Configuration Serveur
+SERVER_PUBLIC_IP = "XXX.XXX.XXX.XXX"  # L'IP vers laquelle Pointer les DNS
+```
+
+### 2. Permissions Système
+
+Le processus web (Flask) a besoin de droits spécifiques pour recharger Nginx et lancer Certbot. 
+Ajoutez ceci au fichier `/etc/sudoers` :
+
+```bash
+# Autoriser l'utilisateur 'swiftly_user' à lancer le script d'auto-config
+swiftly_user ALL=(root) NOPASSWD: /usr/bin/certbot, /usr/sbin/nginx, /path/to/swiftly/scripts/configure_domain.sh
+```
+
+## 🚀 Utilisation (Pour l'utilisateur)
+
+### Ajouter un domaine (C'est tout !)
+
+C'est la seule étape requise.
+
+**Via CLI :**
 ```bash
 python swiftly_cli.py
-# Menu → Voir mon profil → Gérer domaines
-# Entrer: mon-site.fr
+# Menu → 8. Configurer Domaines Personnalisés
+# Entrer: mon-super-site.com
 ```
 
-Ou via **API**:
-```bash
-curl -X POST http://swiftly.ruikdev.me/api/sites/mon-site/domains \
-  -H "X-User-Email: user@example.com" \
-  -H "X-User-Password: votre_mot_de_passe" \
-  -H "Content-Type: application/json" \
-  -d '{"domain": "mon-site.fr"}'
-```
-
-### 2️⃣ Configurer le DNS
-
-Chez votre registraire DNS (OVH, Cloudflare, etc.):
-
-```
-Type:  A
-Nom:   mon-site.fr (ou @)
-IP:    XXX.XXX.XXX.XXX  (même IP que swiftly.ruikdev.me)
-TTL:   3600
-```
-
-Attendez 10-30min de propagation DNS.
-
-### 3️⃣ Configurer Nginx
-
-Ajouter un nouveau `server` block dans votre config Nginx:
-
-```nginx
-# /etc/nginx/sites-available/custom-domains
-
-server {
-    listen 80;
-    listen [::]:80;
-    
-    # Accepter tous les domaines personnalisés
-    server_name ~^(?<domain>.+)\.(?:fr|com|io|dev)$;
-    
-    # Redirection HTTPS
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    
-    # Accepter tous les domaines personnalisés
-    server_name ~^(?<domain>.+)\.(?:fr|com|io|dev)$;
-    
-    # Certificats SSL (Let's Encrypt)
-    ssl_certificate /etc/letsencrypt/live/swiftly.ruikdev.me/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/swiftly.ruikdev.me/privkey.pem;
-    
-    # Configuration SSL standard
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-    
-    # Reverse proxy vers Swiftly
-    location / {
-        # Extraire le nom du site du domaine
-        # Ex: mon-site.fr → mon-site
-        set $site_name $domain;
-        
-        # Passer au service Swiftly interne
-        proxy_pass http://localhost:5000/sites/$site_name/;
-        
-        # Headers nécessaires
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        
-        # Buffering
-        proxy_buffering off;
-    }
-}
-```
-
-Activer et redémarrer Nginx:
-```bash
-sudo ln -s /etc/nginx/sites-available/custom-domains /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-### 4️⃣ SSL/HTTPS automatique
-
-Si vous avez déjà Certbot configuré pour `swiftly.ruikdev.me`:
-
-```bash
-# Renouveler les certificats avec les nouveaux domaines
-sudo certbot renew --expand --cert-name swiftly.ruikdev.me \
-  -d swiftly.ruikdev.me \
-  -d mon-site.fr \
-  -d autre-site.io
-```
-
-Ou générer un certificat wildcard:
-```bash
-sudo certbot certonly --nginx -d '*.ruikdev.me'
-```
-
-## 📡 Gestion des domaines - API Référence
-
-### Lister les domaines d'un site
-
-**Requête:**
-```bash
-GET /api/sites/mon-site
-Headers:
-  X-User-Email: user@example.com
-  X-User-Password: mot_de_passe
-```
-
-**Réponse:**
-```json
-{
-  "sites": {
-    "mon-site": {
-      "folder": "mon-site",
-      "owner": "user@example.com",
-      "domains": ["mon-site.fr", "www.mon-site.fr"],
-      "primary_domain": "mon-site.fr"
-    }
-  }
-}
-```
-
-### Ajouter un domaine
-
-**Requête:**
+**Via API :**
 ```bash
 POST /api/sites/mon-site/domains
-Headers:
-  X-User-Email: user@example.com
-  X-User-Password: mot_de_passe
-  Content-Type: application/json
-
-Body:
 {
-  "domain": "mon-site.fr"
+  "domain": "mon-super-site.com"
 }
 ```
 
-**Réponse (201):**
-```json
-{
-  "message": "Domaine ajouté avec succès",
-  "domain": "mon-site.fr"
-}
-```
+---
+*Une fois la commande lancée, le statut du domaine passera de `PENDING` à `ACTIVE` en quelques minutes (temps de propagation DNS et génération SSL).*
+---
 
-### Retirer un domaine
+## 🛠 Ce que fait le code en arrière-plan
 
-**Requête:**
-```bash
-DELETE /api/sites/mon-site/domains/mon-site.fr
-Headers:
-  X-User-Email: user@example.com
-  X-User-Password: mot_de_passe
-```
+Dès réception de la demande, Swiftly exécute la séquence suivante :
 
-**Réponse (200):**
-```json
-{
-  "message": "Domaine supprimé avec succès"
-}
-```
+### 1. Automatisation DNS (Namecheap)
+Le système utilise l'API `namecheap.domains.dns.setHosts` pour :
+*   Récupérer les enregistrements existants du domaine.
+*   Ajouter un enregistrement `A` (`@`) pointant vers `SERVER_PUBLIC_IP`.
+*   Ajouter un enregistrement `CNAME` (`www`) pointant vers `mon-super-site.com`.
 
-### Définir le domaine principal
+### 2. Automatisation SSL & Nginx
+Une fois le DNS propagé (vérification par boucle de test DNS locale), le système :
+*   Appelle Certbot : `certbot certonly --nginx -d mon-super-site.com --non-interactive`
+*   Crée/Met à jour le fichier de config Nginx `/etc/nginx/sites-available/swiftly_custom_domains` :
+    ```nginx
+    server {
+        listen 443 ssl;
+        server_name mon-super-site.com;
+        ssl_certificate /etc/letsencrypt/live/mon-super-site.com/fullchain.pem;
+        # ... options SSL ...
+        location / {
+            proxy_pass http://127.0.0.1:5000/sites/mon-site/;
+        }
+    }
+    ```
+*   Recharge Nginx : `sudo nginx -s reload`
 
-**Requête:**
-```bash
-PUT /api/sites/mon-site/domains/primary
-Headers:
-  X-User-Email: user@example.com
-  X-User-Password: mot_de_passe
-  Content-Type: application/json
+## 📡 Statuts du domaine
 
-Body:
-{
-  "primary_domain": "www.mon-site.fr"
-}
-```
+L'API retourne l'état de la configuration :
 
-## ✅ Checklist Configuration
+*   **PENDING_DNS** : En attente de propagation DNS.
+*   **PENDING_SSL** : DNS OK, en attente de génération du certificat.
+*   **ACTIVE** : Domaine opérationnel et sécurisé.
+*   **ERROR** : Une intervention manuelle est requise (voir logs).
 
-- [ ] Site créé dans Swiftly et déployé
-- [ ] Domaine personnalisé ajouté via API ou CLI
-- [ ] Enregistrement DNS A configuré (pointe vers votre serveur)
-- [ ] DNS propagé (vérifier avec `nslookup mon-site.fr`)
-- [ ] Config Nginx ajoutée et testée (`nginx -t`)
-- [ ] Nginx redémarré
-- [ ] Certificat SSL/TLS valide et à jour
-- [ ] HTTPS redirige correctement (test avec browser)
-- [ ] Site accessible via domaine personnalisé
+## ⚠️ Limitations & Sécurité
 
-## 🔍 Vérification & Troubleshooting
-
-### Vérifier la propagation DNS
-```bash
-nslookup mon-site.fr
-dig mon-site.fr +short
-```
-
-### Tester le reverse proxy Nginx
-```bash
-curl -H "Host: mon-site.fr" http://localhost/
-# Devrait retourner le contenu du site
-```
-
-### Vérifier les logs Nginx
-```bash
-sudo tail -f /var/log/nginx/error.log
-sudo tail -f /var/log/nginx/access.log
-```
-
-### Vérifier la config Nginx
-```bash
-sudo nginx -t -c /etc/nginx/nginx.conf
-```
-
-### Problème: "Site not found" (404)
-
-1. Vérifier que le site existe dans Swiftly: `/api/sites`
-2. Vérifier que le domaine est enregistré: `GET /api/sites/mon-site`
-3. Vérifier que le `site_name` dans Nginx config correspond au nom Swiftly
-
-### Problème: Certificat SSL invalide
-
-```bash
-# Renouveler les certificats
-sudo certbot renew --force-renewal
-
-# Ou ajouter un nouveau domaine
-sudo certbot certonly --nginx -d mon-site.fr
-```
-
-### Problème: Erreur "Connection refused"
-
-1. Vérifier que Swiftly tourne: `curl http://localhost:5000/health`
-2. Vérifier la configuration Nginx `proxy_pass`
-3. Vérifier les logs Nginx et Swiftly
-
-## 📚 Exemples complets
-
-### Exemple 1: Site portfolio perso
-
-```bash
-# 1. Créer le site
-swiftly_cli.py → Déployer un nouveau site
-Nom: portfolio
-Dossier: ~/projects/portfolio
-
-# 2. Ajouter les domaines
-POST /api/sites/portfolio/domains
-  {"domain": "john-doe.fr"}
-
-POST /api/sites/portfolio/domains
-  {"domain": "www.john-doe.fr"}
-
-# 3. Config DNS
-A record: john-doe.fr → 203.0.113.42
-
-# 4. Config Nginx déjà faite (voir section Configuration)
-
-# 5. Accès
-- https://swiftly.ruikdev.me/sites/portfolio/
-- https://john-doe.fr/
-- https://www.john-doe.fr/
-```
-
-### Exemple 2: Blog avec sous-domaine
-
-```bash
-# Site: mon-blog
-POST /api/sites/mon-blog/domains
-  {"domain": "blog.example.com"}
-
-# DNS:
-CNAME blog.example.com → swiftly.ruikdev.me
-# OU
-A blog.example.com → 203.0.113.42
-
-# Accès: https://blog.example.com/
-```
-
-## 🔒 Sécurité
-
-### Points importants
-
-1. **Validation de domaine** — Seuls les propriétaires de site peuvent ajouter des domaines
-2. **Authentification** — L'API requiert email + mot de passe
-3. **HTTPS obligatoire** — Tous les domaines servis via SSL/TLS
-4. **Isolation des sites** — Nginx vérifie les permissions avant de servir
-
-### À faire
-
-- [ ] Implémenter rate-limiting sur les endpoints de domaines
-- [ ] Ajouter logs d'audit pour les modifications de domaines
-- [ ] Vérifier la propriété du domaine (optionnel: validation email)
-
-## 📞 Support & Questions
-
-Pour des questions ou issues:
-1. Vérifier la section Troubleshooting
-2. Consulter les logs (`/var/log/nginx/`, Swiftly app logs)
-3. Tester avec `curl` et les headers appropriés
+1.  **Whitelist IP** : Votre IP serveur DOIT être whitelistée dans le panel Namecheap API.
+2.  **Temps d'attente** : La propagation DNS peut prendre de 1 à 30 minutes. L'utilisateur doit être prévenu.
+3.  **Rate Limits** : Attention aux limites de l'API Namecheap et de Let's Encrypt (5 certificats par semaine pour le même domaine racine).
 
 ---
 
-**Version:** 1.0 | **Date:** Jan 2026
+**Version:** 2.0 (Auto-Pilot) | **Date:** Jan 2026
