@@ -203,6 +203,17 @@ Accéder à un site déployé.
 http://localhost:5000/sites/mon-super-site
 ```
 
+## 🌐 Sous-domaines génériques
+
+Swiftly prend désormais en charge les sous-domaines génériques ! Cela signifie que vous pouvez déployer vos sites sur des sous-domaines comme `exemple.swiftly.ruikdev.me` sans effort. Configurez simplement vos paramètres DNS et laissez Swiftly s'occuper du reste.
+
+### Avantages clés :
+- Certificats SSL automatiques pour les sous-domaines génériques.
+- Routage transparent pour les fichiers statiques et les ressources.
+- Configuration facile avec Cloudflare DNS.
+
+Consultez la [Documentation API](#-documentation-api) pour des instructions détaillées.
+
 ## 💻 Utilisation CLI
 
 Swiftly est livré avec un outil CLI interactif et puissant pour gérer vos déploiements. Le CLI peut être utilisé indépendamment du serveur !

@@ -203,6 +203,17 @@ Access a deployed site.
 http://localhost:5000/sites/my-awesome-site
 ```
 
+## 🌐 Wildcard Subdomains
+
+Swiftly now supports wildcard subdomains! This means you can deploy your sites to subdomains like `example.swiftly.ruikdev.me` effortlessly. Simply configure your DNS settings and let Swiftly handle the rest.
+
+### Key Benefits:
+- Automatic SSL certificates for wildcard subdomains.
+- Seamless routing for static files and resources.
+- Easy setup with Cloudflare DNS.
+
+Refer to the [documentation](#📄-api-documentation) for detailed instructions.
+
 ## 💻 CLI Usage
 
 Swiftly comes with a powerful interactive CLI tool for managing your deployments. The CLI can be used independently from the server!
