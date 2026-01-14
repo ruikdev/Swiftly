@@ -409,6 +409,7 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [ ] Analytiques de site
 - [ ] Intégration CDN
 - [ ] Support des webhooks pour CI/CD
+- [ ] Ajout d'un système de page dashboard par site (système de login site, et autre)
 
 ### En Cours
 - [x] Déploiement basique de fichiers HTML
@@ -417,7 +418,7 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [x] Upload de fichiers via API
 - [x] Système d'authentification utilisateur
 - [x] Fonctionnalités de sécurité améliorées
-- [x] Interface Dashboard pour la gestion des sites
+- [x] Interface Dashboard pour la gestion des sites (A améliorer, pour plus complexe par site)
 
 ## 🤝 Contribuer
 

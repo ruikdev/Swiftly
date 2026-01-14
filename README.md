@@ -373,7 +373,6 @@ You can modify these in [app.py](app.py).
 - [ ] SSL/TLS certificates automation
 - [ ] Multi-file site deployment (entire directories)
 - [ ] Git integration for automatic deployments
-- [x] Dashboard UI for site management
 - [ ] Environment variables support
 - [ ] Site analytics
 - [ ] CDN integration
@@ -386,8 +385,7 @@ You can modify these in [app.py](app.py).
 - [x] File upload via API
 - [x] User authentication system
 - [x] Enhanced security features
-- [ ] Dashboard UI for site management
- - [x] Dashboard UI for site management
+- [ ] Dashboard UI for site management (To improve, for more complex by site)
 
 ## 🤝 Contributing
 
