@@ -8,6 +8,7 @@ import os
 import shutil
 from swiftly.config import SITES_FOLDER
 from swiftly.database import sites, add_site_to_db
+from swiftly.analytics import init_analytics_db, get_analytics_stats
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
@@ -111,6 +112,9 @@ def deploy():
         
         add_site_to_db(name, site_folder_name, email)
         
+        # Initialiser la DB analytics pour ce site
+        init_analytics_db(name)
+        
         response_data = {
             "message": f"Site '{name}' déployé avec succès",
             "url": f"/sites/{name}",
@@ -127,6 +131,32 @@ def deploy():
         if os.path.exists(site_path):
             shutil.rmtree(site_path)
         return jsonify(error=f"Erreur lors du déploiement: {str(e)}"), 500
+
+@dashboard_bp.route('/site/<site_name>')
+@require_web_auth
+def site_dashboard(site_name):
+    """Dashboard d'un site spécifique avec analytics"""
+    email = session.get('email')
+    current_sites = load_sites()
+    
+    if site_name not in current_sites:
+        flash(f"Le site '{site_name}' n'existe pas", 'error')
+        return redirect(url_for('dashboard.home'))
+    
+    site_data = current_sites[site_name]
+    
+    # Vérifier que l'utilisateur est propriétaire
+    if site_data.get('owner') != email:
+        flash("Vous n'avez pas accès à ce site", 'error')
+        return redirect(url_for('dashboard.home'))
+    
+    # Récupérer les stats analytics
+    stats = get_analytics_stats(site_name)
+    
+    return render_template('dashboard_site.html', 
+                         site_name=site_name, 
+                         site_data=site_data,
+                         stats=stats)
 
 @dashboard_bp.route('/delete/<site_name>', methods=['POST'])
 @require_web_auth

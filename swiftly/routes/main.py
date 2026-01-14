@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, jsonify, request, send_from_direct
 import os
 from swiftly.config import SITES_FOLDER
 from swiftly.database import load_sites
+from swiftly.analytics import track_visit
 
 main_bp = Blueprint('main', __name__)
 
@@ -45,6 +46,8 @@ def serve_site(site_name, subpath=None):
             
             index_path = os.path.join(site_folder, "index.html")
             if os.path.exists(index_path):
+                # Tracker la visite (uniquement pour index.html)
+                track_visit(site_name)
                 return send_from_directory(site_folder, "index.html")
             else:
                 abort(404, description=f"index.html introuvable pour le site '{site_name}'")

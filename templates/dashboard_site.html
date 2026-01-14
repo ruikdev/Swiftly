@@ -1,0 +1,256 @@
+{% extends "dashboard_layout.html" %}
+
+{% block title %}{{ site_name }} - Analytics{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex items-center gap-4 mb-6">
+        <a href="/dashboard" class="text-slate-600 hover:text-slate-900">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ site_name }}</h1>
+            <p class="text-slate-600">Analytics et statistiques de visite</p>
+        </div>
+    </div>
+    
+    <div class="flex gap-4">
+        <a href="https://{{ site_name }}.swiftly.ruikdev.me" target="_blank" class="px-4 py-2 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-all inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            Voir le site
+        </a>
+    </div>
+</div>
+
+{% if stats %}
+<!-- KPIs -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </div>
+        </div>
+        <div class="text-3xl font-bold mb-1">{{ stats.total_visits }}</div>
+        <div class="text-blue-100 text-sm">Visites totales</div>
+    </div>
+    
+    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+        </div>
+        <div class="text-3xl font-bold mb-1">{{ stats.unique_ips }}</div>
+        <div class="text-purple-100 text-sm">Visiteurs uniques</div>
+    </div>
+    
+    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+        </div>
+        <div class="text-3xl font-bold mb-1">{{ stats.countries|length }}</div>
+        <div class="text-green-100 text-sm">Pays différents</div>
+    </div>
+</div>
+
+<!-- Graphiques -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Navigateurs -->
+    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
+        <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            Navigateurs
+        </h3>
+        <canvas id="browsersChart" class="w-full" height="250"></canvas>
+    </div>
+    
+    <!-- Systèmes d'exploitation -->
+    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
+        <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+            Systèmes d'exploitation
+        </h3>
+        <canvas id="osChart" class="w-full" height="250"></canvas>
+    </div>
+</div>
+
+<!-- Pays -->
+<div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-8">
+    <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Répartition géographique
+    </h3>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for country, count in stats.countries.items() %}
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <span class="text-slate-700 font-medium">{{ country }}</span>
+            <span class="text-brand-600 font-bold">{{ count }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Referrers -->
+<div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-8">
+    <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        Sources de trafic
+    </h3>
+    <div class="space-y-3">
+        {% for referrer, count in stats.referrers.items() %}
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+                <svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <span class="text-slate-700 font-medium truncate">{{ referrer }}</span>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="w-32 bg-slate-200 rounded-full h-2 overflow-hidden">
+                    <div class="bg-brand-600 h-full rounded-full" style="width: {{ (count / stats.total_visits * 100)|round(1) }}%"></div>
+                </div>
+                <span class="text-brand-600 font-bold min-w-[3rem] text-right">{{ count }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Visites par jour -->
+<div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
+    <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        Visites quotidiennes
+    </h3>
+    <canvas id="dailyChart" class="w-full" height="300"></canvas>
+</div>
+
+{% else %}
+<div class="bg-white rounded-2xl shadow-md border border-slate-200 p-12 text-center">
+    <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+    </div>
+    <h3 class="text-xl font-bold text-slate-900 mb-2">Aucune donnée analytique</h3>
+    <p class="text-slate-600">Les statistiques apparaîtront dès que votre site recevra des visiteurs</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if stats %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const brandColor = '#6366f1';
+const colors = [
+    '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', 
+    '#06b6d4', '#ef4444', '#f97316', '#84cc16', '#a855f7'
+];
+
+// Navigateurs
+const browsersCtx = document.getElementById('browsersChart').getContext('2d');
+const browsersData = {{ stats.browsers|tojson }};
+new Chart(browsersCtx, {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(browsersData),
+        datasets: [{
+            data: Object.values(browsersData),
+            backgroundColor: colors,
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 15,
+                    font: { size: 12 }
+                }
+            }
+        }
+    }
+});
+
+// OS
+const osCtx = document.getElementById('osChart').getContext('2d');
+const osData = {{ stats.os|tojson }};
+new Chart(osCtx, {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(osData),
+        datasets: [{
+            data: Object.values(osData),
+            backgroundColor: colors,
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 15,
+                    font: { size: 12 }
+                }
+            }
+        }
+    }
+});
+
+// Visites quotidiennes
+const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+const dailyData = {{ stats.daily|tojson }};
+new Chart(dailyCtx, {
+    type: 'line',
+    data: {
+        labels: Object.keys(dailyData),
+        datasets: [{
+            label: 'Visites',
+            data: Object.values(dailyData),
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderColor: brandColor,
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: brandColor,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                },
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
+{% endif %}
+{% endblock %}
