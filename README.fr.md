@@ -345,39 +345,48 @@ python cli_api_test.py help
 
 ```
 Swiftly/
-├── app.py                      # Application Flask principale
-├── swiftly_cli.py              # Script CLI interactif
-├── swiftly.sh                  # Installateur / lanceur (Linux/macOS)
-├── swiftly.bat                 # Installateur / lanceur (Windows)
-├── requirements.txt            # Dépendances Python
+├── ANALYTICS.md
+├── app.py
+├── LICENSE
+├── README.fr.md
+├── README.md
+├── requirements.txt
+├── swiftly_cli.py
+├── swiftly.bat
+├── swiftly.sh
 ├── db/
-│   ├── sites.json              # Base de données des sites (local)
-│   └── users.json              # Base de données des utilisateurs (local)
-├── sites/                      # Dossiers des sites déployés
-├── templates/                  # Templates Jinja2
-│   ├── base.html
-│   ├── dashboard_layout.html
-│   ├── auth_login.html
-│   ├── auth_register.html
-│   ├── dashboard_home.html
-│   ├── dashboard_deploy.html
-│   └── dashboard_profile.html
-├── swiftly/                    # Package principal
+│   └── sites.json
+├── sites/
+├── static/
+│   └── images/
+├── swiftly/
 │   ├── __init__.py
+│   ├── analytics.py
 │   ├── config.py
 │   ├── database.py
 │   ├── models/
+│   │   ├── __init__.py
 │   │   ├── site.py
 │   │   └── user.py
 │   ├── routes/
-│   │   ├── main.py
+│   │   ├── __init__.py
 │   │   ├── auth.py
+│   │   ├── dashboard.py
+│   │   ├── main.py
 │   │   ├── sites.py
-│   │   ├── user.py
-│   │   └── dashboard.py
+│   │   └── user.py
 │   └── utils/
+│       ├── __init__.py
 │       └── decorators.py
-└── README.md
+└── templates/
+  ├── base.html
+  ├── dashboard_layout.html
+  ├── dashboard_home.html
+  ├── dashboard_site.html
+  ├── dashboard_deploy.html
+  ├── dashboard_profile.html
+  ├── auth_login.html
+  └── auth_register.html
 ```
 
 ## 🛠️ Configuration
@@ -410,15 +419,6 @@ Vous pouvez modifier ces valeurs dans [app.py](app.py).
 - [ ] Intégration CDN
 - [ ] Support des webhooks pour CI/CD
 - [ ] Ajout d'un système de page dashboard par site (système de login site, et autre)
-
-### En Cours
-- [x] Déploiement basique de fichiers HTML
-- [x] API REST
-- [x] Outil CLI
-- [x] Upload de fichiers via API
-- [x] Système d'authentification utilisateur
-- [x] Fonctionnalités de sécurité améliorées
-- [x] Interface Dashboard pour la gestion des sites (A améliorer, pour plus complexe par site)
 
 ## 🤝 Contribuer
 

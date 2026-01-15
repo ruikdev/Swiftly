@@ -313,39 +313,48 @@ Swiftly comes with a powerful CLI tool for testing and managing your deployments
 
 ```
 Swiftly/
-├── app.py                      # Main Flask application
-├── swiftly_cli.py              # Interactive CLI script
-├── swiftly.sh                  # Installer / launcher (Linux/macOS)
-├── swiftly.bat                 # Installer / launcher (Windows)
-├── requirements.txt            # Python dependencies
+├── ANALYTICS.md
+├── app.py
+├── LICENSE
+├── README.fr.md
+├── README.md
+├── requirements.txt
+├── swiftly_cli.py
+├── swiftly.bat
+├── swiftly.sh
 ├── db/
-│   ├── sites.json              # Site database (local)
-│   └── users.json              # Users database (local)
-├── sites/                      # Deployed site folders
-├── templates/                  # Jinja2 templates
-│   ├── base.html
-│   ├── dashboard_layout.html
-│   ├── auth_login.html
-│   ├── auth_register.html
-│   ├── dashboard_home.html
-│   ├── dashboard_deploy.html
-│   └── dashboard_profile.html
-├── swiftly/                    # Main package
+│   └── sites.json
+├── sites/
+├── static/
+│   └── images/
+├── swiftly/
 │   ├── __init__.py
+│   ├── analytics.py
 │   ├── config.py
 │   ├── database.py
 │   ├── models/
+│   │   ├── __init__.py
 │   │   ├── site.py
 │   │   └── user.py
 │   ├── routes/
-│   │   ├── main.py
+│   │   ├── __init__.py
 │   │   ├── auth.py
+│   │   ├── dashboard.py
+│   │   ├── main.py
 │   │   ├── sites.py
-│   │   ├── user.py
-│   │   └── dashboard.py
+│   │   └── user.py
 │   └── utils/
+│       ├── __init__.py
 │       └── decorators.py
-└── README.fr.md
+└── templates/
+  ├── base.html
+  ├── dashboard_layout.html
+  ├── dashboard_home.html
+  ├── dashboard_site.html
+  ├── dashboard_deploy.html
+  ├── dashboard_profile.html
+  ├── auth_login.html
+  └── auth_register.html
 ```
 
 ## 🛠️ Configuration
@@ -377,15 +386,6 @@ You can modify these in [app.py](app.py).
 - [ ] Site analytics
 - [ ] CDN integration
 - [ ] Webhook support for CI/CD
-
-### In Progress
-- [x] Basic HTML file deployment
-- [x] REST API
-- [x] CLI tool
-- [x] File upload via API
-- [x] User authentication system
-- [x] Enhanced security features
-- [ ] Dashboard UI for site management (To improve, for more complex by site)
 
 ## 🤝 Contributing
 
