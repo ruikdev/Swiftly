@@ -64,7 +64,9 @@
             <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             Navigateurs
         </h3>
-        <canvas id="browsersChart" class="w-full" height="250"></canvas>
+        <div style="position: relative; height: 250px;">
+            <canvas id="browsersChart"></canvas>
+        </div>
     </div>
     
     <!-- Systèmes d'exploitation -->
@@ -73,7 +75,9 @@
             <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
             Systèmes d'exploitation
         </h3>
-        <canvas id="osChart" class="w-full" height="250"></canvas>
+        <div style="position: relative; height: 250px;">
+            <canvas id="osChart"></canvas>
+        </div>
     </div>
 </div>
 
@@ -123,7 +127,9 @@
         <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
         Visites quotidiennes
     </h3>
-    <canvas id="dailyChart" class="w-full" height="300"></canvas>
+    <div style="position: relative; height: 300px;">
+        <canvas id="dailyChart"></canvas>
+    </div>
 </div>
 
 {% else %}
@@ -141,116 +147,130 @@
 {% if stats %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-const brandColor = '#6366f1';
-const colors = [
-    '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', 
-    '#06b6d4', '#ef4444', '#f97316', '#84cc16', '#a855f7'
-];
+// S'assurer que le script ne s'exécute qu'une seule fois
+if (!window.chartsInitialized) {
+    window.chartsInitialized = true;
+    
+    const brandColor = '#6366f1';
+    const colors = [
+        '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', 
+        '#06b6d4', '#ef4444', '#f97316', '#84cc16', '#a855f7'
+    ];
 
-// Navigateurs
-const browsersCtx = document.getElementById('browsersChart').getContext('2d');
-const browsersData = {{ stats.browsers|tojson }};
-new Chart(browsersCtx, {
-    type: 'doughnut',
-    data: {
-        labels: Object.keys(browsersData),
-        datasets: [{
-            data: Object.values(browsersData),
-            backgroundColor: colors,
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 15,
-                    font: { size: 12 }
-                }
-            }
-        }
-    }
-});
-
-// OS
-const osCtx = document.getElementById('osChart').getContext('2d');
-const osData = {{ stats.os|tojson }};
-new Chart(osCtx, {
-    type: 'doughnut',
-    data: {
-        labels: Object.keys(osData),
-        datasets: [{
-            data: Object.values(osData),
-            backgroundColor: colors,
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 15,
-                    font: { size: 12 }
-                }
-            }
-        }
-    }
-});
-
-// Visites quotidiennes
-const dailyCtx = document.getElementById('dailyChart').getContext('2d');
-const dailyData = {{ stats.daily|tojson }};
-new Chart(dailyCtx, {
-    type: 'line',
-    data: {
-        labels: Object.keys(dailyData),
-        datasets: [{
-            label: 'Visites',
-            data: Object.values(dailyData),
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            borderColor: brandColor,
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            pointBackgroundColor: brandColor,
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointHoverRadius: 6
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                },
-                grid: {
-                    color: 'rgba(0, 0, 0, 0.05)'
-                }
+    // Navigateurs
+    const browsersCtx = document.getElementById('browsersChart');
+    if (browsersCtx) {
+        const browsersData = {{ stats.browsers|tojson }};
+        new Chart(browsersCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(browsersData),
+                datasets: [{
+                    data: Object.values(browsersData),
+                    backgroundColor: colors,
+                    borderWidth: 0
+                }]
             },
-            x: {
-                grid: {
-                    display: false
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.5,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12 }
+                        }
+                    }
                 }
             }
-        }
+        });
     }
-});
+
+    // OS
+    const osCtx = document.getElementById('osChart');
+    if (osCtx) {
+        const osData = {{ stats.os|tojson }};
+        new Chart(osCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(osData),
+                datasets: [{
+                    data: Object.values(osData),
+                    backgroundColor: colors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.5,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12 }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Visites quotidiennes
+    const dailyCtx = document.getElementById('dailyChart');
+    if (dailyCtx) {
+        const dailyData = {{ stats.daily|tojson }};
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(dailyData),
+                datasets: [{
+                    label: 'Visites',
+                    data: Object.values(dailyData),
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: brandColor,
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: brandColor,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
 </script>
 {% endif %}
 {% endblock %}
