@@ -38,8 +38,9 @@ Perfect for:
 - **🚀 Simple API** - Upload and deploy HTML files via REST API
 - **💻 CLI Tool** - Command-line interface for easy deployment
 - **📦 File Upload** - Direct HTML file upload support
- - **📦 File & Directory Upload** - Direct HTML file upload and full directory upload (preserves structure)
- - **📊 Dashboard UI** - Web interface for managing sites (login, deploy, delete)
+- **📦 File & Directory Upload** - Direct HTML file upload and full directory upload (preserves structure)
+- **📊 Dashboard UI** - Web interface for managing sites (login, deploy, delete)
+- **📊 Analytics system** - Encrypted per-site visit collection with integrated dashboard
 - **🗂️ Site Management** - List, add, and delete sites easily
 - **🔒 Secure** - File name sanitization and validation
 - **📊 JSON Database** - Simple file-based storage

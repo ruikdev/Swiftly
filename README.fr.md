@@ -38,8 +38,9 @@ Parfait pour :
 - **🚀 API Simple** - Uploadez et déployez des fichiers HTML via l'API REST
 - **💻 Outil CLI** - Interface en ligne de commande pour un déploiement facile
 - **📦 Upload de Fichiers** - Support de l'upload direct de fichiers HTML
- - **📦 Upload de Fichiers et Dossiers** - Support de l'upload direct de fichiers HTML et upload de dossiers complets (préserve l'arborescence)
- - **📊 Interface Dashboard** - Gestion via une interface web (connexion, déploiement, suppression)
+- **📦 Upload de Fichiers et Dossiers** - Support de l'upload direct de fichiers HTML et upload de dossiers complets (préserve l'arborescence)
+- **📊 Interface Dashboard** - Gestion via une interface web (connexion, déploiement, suppression)
+- **📊 Système d'Analytics** - Collecte chiffrée des visites par site avec dashboard intégré
 - **🗂️ Gestion de Sites** - Listez, ajoutez et supprimez des sites facilement
 - **🔒 Sécurisé** - Validation et sécurisation des noms de fichiers
 - **📊 Base de Données JSON** - Stockage simple basé sur des fichiers
