@@ -203,6 +203,25 @@ Accéder à un site déployé.
 http://localhost:5000/sites/mon-super-site
 ```
 
+## 📊 Analytics
+
+Swiftly intègre un système d'analytics léger qui collecte et chiffre les visites par site. Voici les routes et fonctions principales (voir `swiftly/analytics.py` et `templates/dashboard_site.html`).
+
+- Routes :
+  - `GET /dashboard/site/<site_name>` — dashboard analytics d'un site.
+  - L'accès à `index.html` d'un site (via `/sites/<site_name>/`) déclenche `track_visit()` pour enregistrer la visite.
+
+- Module `swiftly.analytics` (fonctions principales) :
+  - `init_analytics_db(site_name: str) -> bool` — crée le `.analytics.json` pour un site.
+  - `track_visit(site_name: str) -> bool` — enregistre une visite (appelé lors du service de la page).
+  - `get_analytics(site_name: str, decrypt: bool = True) -> dict` — récupère les analytics brutes.
+  - `get_analytics_stats(site_name: str) -> dict` — calcule KPIs et statistiques pour le dashboard.
+  - `encrypt_data(data: dict) -> str` / `decrypt_data(encrypted_hex: str) -> dict` — utilitaires de chiffrement Fernet.
+
+- Stockage : les analytics sont stockées par site dans `sites/<site>/.analytics.json`.
+
+- Sécurité : les champs sensibles sont chiffrés avec Fernet. Configurer `ANALYTICS_ENCRYPTION_KEY` dans `swiftly/config.py` ou via une variable d'environnement en production.
+
 ## 🌐 Sous-domaines génériques
 
 Swiftly prend désormais en charge les sous-domaines génériques ! Cela signifie que vous pouvez déployer vos sites sur des sous-domaines comme `exemple.swiftly.ruikdev.me` sans effort. Configurez simplement vos paramètres DNS et laissez Swiftly s'occuper du reste.

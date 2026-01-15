@@ -368,6 +368,25 @@ The application uses the following defaults:
 
 You can modify these in [app.py](app.py).
 
+## 📊 Analytics
+
+Swiftly includes a lightweight analytics system that collects and encrypts visit data per site. Below are the main routes and functions you’ll find in the codebase (see `swiftly/analytics.py` and `templates/dashboard_site.html`).
+
+- Routes:
+  - `GET /dashboard/site/<site_name>` — site dashboard with analytics.
+  - Serving a site's `index.html` (via `/sites/<site_name>/`) triggers `track_visit()` to record visits.
+
+- Module `swiftly.analytics` (main functions):
+  - `init_analytics_db(site_name: str) -> bool` — create the `.analytics.json` for a site.
+  - `track_visit(site_name: str) -> bool` — record a visit (called when a site page is served).
+  - `get_analytics(site_name: str, decrypt: bool = True) -> dict` — retrieve raw analytics data.
+  - `get_analytics_stats(site_name: str) -> dict` — compute KPIs and aggregated stats for the dashboard.
+  - `encrypt_data(data: dict) -> str` / `decrypt_data(encrypted_hex: str) -> dict` — utilities for Fernet encryption.
+
+- Storage: analytics are stored per-site in `sites/<site>/.analytics.json`.
+
+- Security: sensitive fields are encrypted with Fernet. Configure `ANALYTICS_ENCRYPTION_KEY` in `swiftly/config.py` or via an environment variable in production.
+
 ## 🔐 Security Features
 
 - ✅ Filename sanitization with `secure_filename()`
