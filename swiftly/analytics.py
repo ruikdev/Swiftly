@@ -148,11 +148,16 @@ def track_visit(site_name):
     # Crypter les données
     encrypted_data = encrypt_data(visitor_data)
     
-    # Charger la DB
+    # Charger la DB avec récupération automatique
     try:
         with open(db_path, 'r') as f:
             analytics = json.load(f)
     except (json.JSONDecodeError, FileNotFoundError):
+        analytics = {'visits': [], 'created_at': datetime.utcnow().isoformat()}
+    
+    # Vérifier que la clé 'visits' existe, sinon réinitialiser
+    if 'visits' not in analytics or not isinstance(analytics['visits'], list):
+        print(f"⚠️ DB analytics corrompue pour {site_name}, réinitialisation...")
         analytics = {'visits': [], 'created_at': datetime.utcnow().isoformat()}
     
     # Ajouter la visite cryptée
@@ -177,6 +182,13 @@ def get_analytics(site_name, decrypt=True):
     try:
         with open(db_path, 'r') as f:
             analytics = json.load(f)
+        
+        # Vérifier intégrité de la structure
+        if 'visits' not in analytics or not isinstance(analytics['visits'], list):
+            print(f"⚠️ DB analytics corrompue pour {site_name}, réinitialisation...")
+            analytics = {'visits': [], 'created_at': datetime.utcnow().isoformat()}
+            with open(db_path, 'w') as f:
+                json.dump(analytics, f, indent=2)
         
         if decrypt:
             # Décrypter toutes les visites
