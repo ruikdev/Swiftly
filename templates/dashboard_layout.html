@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Dashboard{% endblock %} - Swiftly</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -43,9 +44,8 @@
                         Déconnexion
                     </a>
                     {% else %}
-                    <a href="/auth/login" class="text-sm font-medium text-slate-600 hover:text-brand-600">Connexion</a>
-                    <a href="/auth/register" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 rounded-full hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/30">
-                        Inscription
+                    <a href="/auth/login" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 rounded-full hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/30">
+                        Authentification
                     </a>
                     {% endif %}
                 </div>

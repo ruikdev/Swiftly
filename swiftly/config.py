@@ -10,7 +10,7 @@ DB_SITES = "db/sites.json"
 SITES_FOLDER = "sites"
 
 # Clé de cryptage pour les analytics (généré avec Fernet.generate_key())
-ANALYTICS_ENCRYPTION_KEY = b'8xK9mN2pQsdf453167L8nM2pR5sT7uX0='
+ANALYTICS_ENCRYPTION_KEY = b'ZliOEOl1awGF9J3OCZPhTvXVMvVc7_0qgtBh1OMXDqo='
 
 # Configuration Flask
 DEBUG = True

@@ -47,36 +47,12 @@ def login():
 
 # ========== Routes Web ==========
 
-@auth_web_bp.route('/register', methods=['GET', 'POST'])
-def web_register():
-    """Page d'inscription web"""
-    if request.method == 'GET':
-        return render_template('auth_register.html')
-    
-    email = request.form.get('email')
-    password = request.form.get('password')
-    
-    if not email or not password:
-        flash('Email et mot de passe requis', 'error')
-        return redirect(url_for('auth_web.web_register'))
-    
-    if len(password) < 6:
-        flash('Le mot de passe doit contenir au moins 6 caractères', 'error')
-        return redirect(url_for('auth_web.web_register'))
-    
-    if create_user(email, password):
-        session['email'] = email
-        flash('Compte créé avec succès !', 'success')
-        return redirect(url_for('dashboard.home'))
-    else:
-        flash('Un compte avec cet email existe déjà', 'error')
-        return redirect(url_for('auth_web.web_register'))
-
+@auth_web_bp.route('/', methods=['GET', 'POST'])
 @auth_web_bp.route('/login', methods=['GET', 'POST'])
 def web_login():
-    """Page de connexion web"""
+    """Page de connexion web (seule page unifiée)"""
     if request.method == 'GET':
-        return render_template('auth_login.html')
+        return render_template('auth.html')
     
     email = request.form.get('email')
     password = request.form.get('password')
@@ -91,6 +67,28 @@ def web_login():
         return redirect(url_for('dashboard.home'))
     else:
         flash('Email ou mot de passe incorrect', 'error')
+        return redirect(url_for('auth_web.web_login'))
+
+@auth_web_bp.route('/register', methods=['POST'])
+def web_register():
+    """Gestion d'inscription (sur la même page)"""
+    email = request.form.get('email')
+    password = request.form.get('password')
+    
+    if not email or not password:
+        flash('Email et mot de passe requis', 'error')
+        return redirect(url_for('auth_web.web_login'))
+    
+    if len(password) < 6:
+        flash('Le mot de passe doit contenir au moins 6 caractères', 'error')
+        return redirect(url_for('auth_web.web_login'))
+    
+    if create_user(email, password):
+        session['email'] = email
+        flash('Compte créé avec succès !', 'success')
+        return redirect(url_for('dashboard.home'))
+    else:
+        flash('Un compte avec cet email existe déjà', 'error')
         return redirect(url_for('auth_web.web_login'))
 
 @auth_web_bp.route('/logout')

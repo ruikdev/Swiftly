@@ -2,11 +2,13 @@
 
 {% block title %}{{ site_name }} - Analytics{% endblock %}
 
+
+
 {% block content %}
 <div class="mb-8">
     <div class="flex items-center gap-4 mb-6">
         <a href="/dashboard" class="text-slate-600 hover:text-slate-900">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <i class="fa-solid fa-arrow-left text-xl"></i>
         </a>
         <div>
             <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ site_name }}</h1>
@@ -16,7 +18,7 @@
     
     <div class="flex gap-4">
         <a href="https://{{ site_name }}.swiftly.ruikdev.me" target="_blank" class="px-4 py-2 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-all inline-flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
             Voir le site
         </a>
     </div>
@@ -25,30 +27,30 @@
 {% if stats %}
 <!-- KPIs -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
+    <div class="group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            <div class="transition-transform duration-300 ease-in-out group-hover:scale-125 group-hover:translate-x-2 w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-eye text-xl"></i>
             </div>
         </div>
         <div class="text-3xl font-bold mb-1">{{ stats.total_visits }}</div>
         <div class="text-blue-100 text-sm">Visites totales</div>
     </div>
     
-    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
+    <div class="group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <div class="transition-transform duration-300 ease-in-out group-hover:scale-125 group-hover:translate-x-2 w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-users text-xl"></i>
             </div>
         </div>
         <div class="text-3xl font-bold mb-1">{{ stats.unique_ips }}</div>
         <div class="text-purple-100 text-sm">Visiteurs uniques</div>
     </div>
     
-    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
+    <div class="group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="transition-transform duration-300 ease-in-out group-hover:scale-125 group-hover:translate-x-2 w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-earth-americas text-xl"></i>
             </div>
         </div>
         <div class="text-3xl font-bold mb-1">{{ stats.countries|length }}</div>
@@ -61,7 +63,7 @@
     <!-- Navigateurs -->
     <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
         <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <i class="fa-solid fa-window-restore text-brand-600"></i>
             Navigateurs
         </h3>
         <div style="position: relative; height: 250px;">
@@ -72,7 +74,7 @@
     <!-- Systèmes d'exploitation -->
     <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
         <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+            <i class="fa-solid fa-desktop text-brand-600"></i>
             Systèmes d'exploitation
         </h3>
         <div style="position: relative; height: 250px;">
@@ -84,7 +86,7 @@
 <!-- Pays -->
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-8">
     <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <i class="fa-solid fa-globe text-brand-600"></i>
         Répartition géographique
     </h3>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -100,14 +102,14 @@
 <!-- Referrers -->
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-8">
     <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        <i class="fa-solid fa-link text-brand-600"></i>
         Sources de trafic
     </h3>
     <div class="space-y-3">
         {% for referrer, count in stats.referrers.items() %}
         <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
             <div class="flex items-center gap-3 flex-1 min-w-0">
-                <svg class="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
                 <span class="text-slate-700 font-medium truncate">{{ referrer }}</span>
             </div>
             <div class="flex items-center gap-3 flex-shrink-0">
@@ -124,7 +126,7 @@
 <!-- Visites par jour -->
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
     <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <i class="fa-solid fa-chart-column text-brand-600"></i>
         Visites quotidiennes
     </h3>
     <div style="position: relative; height: 300px;">
@@ -135,7 +137,7 @@
 {% else %}
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-12 text-center">
     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <i class="fa-solid fa-chart-simple text-4xl text-slate-400"></i>
     </div>
     <h3 class="text-xl font-bold text-slate-900 mb-2">Aucune donnée analytique</h3>
     <p class="text-slate-600">Les statistiques apparaîtront dès que votre site recevra des visiteurs</p>
