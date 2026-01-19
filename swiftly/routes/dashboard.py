@@ -1,13 +1,12 @@
 """Routes du dashboard web"""
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from swiftly.database import load_sites, get_user_sites, delete_site_from_db
+from swiftly.database import get_user_sites, delete_site_from_db, add_site_to_db
 from swiftly.utils.decorators import require_auth
 from werkzeug.utils import secure_filename
 import os
 import shutil
 from swiftly.config import SITES_FOLDER
-from swiftly.database import sites, add_site_to_db
 from swiftly.analytics import init_analytics_db, get_analytics_stats
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
@@ -47,17 +46,17 @@ def deploy():
     if request.method == 'GET':
         return render_template('dashboard_deploy.html')
     
-    # POST - Déployer le site
+    # POST - Déploiement du site
     email = session.get('email')
     name = request.form.get('name')
+    custom_domain = request.form.get('custom_domain', '').strip()
     
     if not name:
         return jsonify(error="Le champ 'name' est requis"), 400
     
-    # Recharger les sites
-    current_sites = load_sites()
-    
-    if name in current_sites:
+    # Vérifier si le site existe déjà
+    from swiftly.database import get_site_by_name
+    if get_site_by_name(name):
         return jsonify(error=f"Le site '{name}' existe déjà"), 409
     
     if not request.files:
@@ -110,7 +109,18 @@ def deploy():
             shutil.rmtree(site_path)
             return jsonify(error="Le site doit contenir un fichier 'index.html' à la racine"), 400
         
-        add_site_to_db(name, site_folder_name, email)
+        # Générer le sous-domaine automatique
+        from swiftly.config import SUBDOMAIN_BASE
+        auto_subdomain = f"{name}.{SUBDOMAIN_BASE}"
+        
+        # Ajouter le site à la DB
+        add_site_to_db(
+            name, 
+            site_folder_name, 
+            email,
+            auto_subdomain=auto_subdomain,
+            custom_domain=custom_domain if custom_domain else None
+        )
         
         # Initialiser la DB analytics pour ce site
         init_analytics_db(name)
@@ -137,16 +147,15 @@ def deploy():
 def site_dashboard(site_name):
     """Dashboard d'un site spécifique avec analytics"""
     email = session.get('email')
-    current_sites = load_sites()
+    from swiftly.database import get_site_by_name
+    site_data = get_site_by_name(site_name)
     
-    if site_name not in current_sites:
+    if not site_data:
         flash(f"Le site '{site_name}' n'existe pas", 'error')
         return redirect(url_for('dashboard.home'))
     
-    site_data = current_sites[site_name]
-    
     # Vérifier que l'utilisateur est propriétaire
-    if site_data.get('owner') != email:
+    if site_data.get('owner_email') != email:
         flash("Vous n'avez pas accès à ce site", 'error')
         return redirect(url_for('dashboard.home'))
     
@@ -163,12 +172,11 @@ def site_dashboard(site_name):
 def delete_site(site_name):
     """Supprimer un site"""
     email = session.get('email')
-    current_sites = load_sites()
+    from swiftly.database import get_site_by_name
+    site_data = get_site_by_name(site_name)
     
-    if site_name not in current_sites:
+    if not site_data:
         return jsonify(error=f"Le site '{site_name}' n'existe pas"), 404
-    
-    site_data = current_sites[site_name]
     
     if delete_site_from_db(site_name, email):
         try:

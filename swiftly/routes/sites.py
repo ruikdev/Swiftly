@@ -5,9 +5,10 @@ from werkzeug.utils import secure_filename
 import os
 import shutil
 import re
-from swiftly.database import sites, users, add_site_to_db, get_user_sites, delete_site_from_db
-from swiftly.config import SITES_FOLDER
+from swiftly.database import get_site_by_name, get_user_sites, add_site_to_db, delete_site_from_db
+from swiftly.config import SITES_FOLDER, ENABLE_SSH_MANAGEMENT
 from swiftly.utils.decorators import require_auth
+from swiftly.utils.ssh_manager import setup_subdomain, remove_subdomain, get_dns_instructions
 
 sites_bp = Blueprint('sites', __name__, url_prefix='/api/sites')
 
@@ -60,15 +61,20 @@ def list_sites_route(auth_email):
 @require_auth
 def create_site_route(auth_email):
     """Ajouter un nouveau site avec upload de dossier complet"""
+    from swiftly.config import SUBDOMAIN_BASE
     
     name = request.form.get('name')
+    custom_domain = request.form.get('custom_domain', '').strip()
+    
+    # Générer le sous-domaine automatique
+    auto_subdomain = f"{name}.{SUBDOMAIN_BASE}"
     
     # Validation du nom
     if not name:
         return jsonify(error="Le champ 'name' est requis"), 400
     
     # Vérifier si le site existe déjà
-    if name in sites:
+    if get_site_by_name(name):
         return jsonify(error=f"Le site '{name}' existe déjà"), 409
     
     # Vérifier si des fichiers sont présents
@@ -133,18 +139,64 @@ def create_site_route(auth_email):
                 uploaded_files=uploaded_files
             ), 400
         
+        # Configurer le domaine custom si fourni
+        dns_info_auto = get_dns_instructions(auto_subdomain, is_custom=False)
+        dns_info_custom = None
+        custom_domain_status = None
+        
+        if custom_domain:
+            if ENABLE_SSH_MANAGEMENT:
+                success, message = setup_subdomain(custom_domain, name)
+                custom_domain_status = {"success": success, "message": message}
+            dns_info_custom = get_dns_instructions(custom_domain, is_custom=True)
+        
         # Ajouter le site à la DB
-        add_site_to_db(name, site_folder_name, auth_email)
+        success = add_site_to_db(
+            name, 
+            site_folder_name, 
+            auth_email, 
+            auto_subdomain=auto_subdomain,
+            custom_domain=custom_domain if custom_domain else None
+        )
+        
+        if not success:
+            # Nettoyer en cas d'échec
+            if os.path.exists(site_path):
+                shutil.rmtree(site_path)
+            if custom_domain and ENABLE_SSH_MANAGEMENT:
+                remove_subdomain(custom_domain)
+            return jsonify(error="Erreur lors de l'ajout du site à la base de données"), 500
         
         response_data = {
             "message": f"Site '{name}' déployé avec succès",
-            "site": {name: {"folder": site_folder_name, "owner": auth_email}},
-            "url": f"/sites/{name}",
+            "site": {
+                "name": name,
+                "folder": site_folder_name,
+                "owner": auth_email,
+                "auto_subdomain": auto_subdomain,
+                "custom_domain": custom_domain if custom_domain else None
+            },
+            "urls": {
+                "local": f"/sites/{name}/",
+                "subdomain": f"https://{auto_subdomain}" if ENABLE_SSH_MANAGEMENT else f"http://{auto_subdomain}",
+                "custom": f"https://{custom_domain}" if custom_domain else None
+            },
             "files_uploaded": len(uploaded_files),
             "files": uploaded_files
         }
         
-        # Ajouter un avertissement si des chemins ont été corrigés
+        # Ajouter les informations DNS pour le sous-domaine auto
+        response_data["auto_subdomain_info"] = dns_info_auto
+        
+        # Ajouter les informations DNS pour le domaine custom
+        if dns_info_custom:
+            response_data["custom_domain_info"] = dns_info_custom
+        
+        # Ajouter le statut du domaine custom
+        if custom_domain_status:
+            response_data["custom_domain_setup"] = custom_domain_status
+        
+        # Ajouter un avertissement si des fichiers ont été corrigés
         if fixed_files:
             response_data["warning"] = "Chemins absolus détectés et automatiquement convertis en chemins relatifs"
             response_data["fixed_files"] = fixed_files
@@ -152,35 +204,36 @@ def create_site_route(auth_email):
         return jsonify(response_data), 201
     
     except Exception as e:
-        # En cas d'erreur, nettoyer le dossier
+        # En cas d'erreur, nettoyer le dossier et la config nginx
         if os.path.exists(site_path):
             shutil.rmtree(site_path)
+        if custom_domain and ENABLE_SSH_MANAGEMENT:
+            remove_subdomain(custom_domain)
         return jsonify(error=f"Erreur lors du déploiement: {str(e)}"), 500
 
 @sites_bp.route('/<site_name>', methods=['DELETE'])
 @require_auth
-def remove_site_route(auth_email, site_name):
-    """Supprimer un site (uniquement si l'utilisateur en est le propriétaire)"""
-    if site_name not in sites:
+def delete_site_route(auth_email, site_name):
+    """Supprimer un site (seulement si l'utilisateur en est le propriétaire)"""
+    site = get_site_by_name(site_name)
+    
+    if not site:
         return jsonify(error=f"Le site '{site_name}' n'existe pas"), 404
     
-    site_data = sites[site_name]
+    # Supprimer le domaine custom si configuré
+    if site.get('custom_domain') and ENABLE_SSH_MANAGEMENT:
+        remove_subdomain(site['custom_domain'])
     
+    # Supprimer de la base de données
     if delete_site_from_db(site_name, auth_email):
-        # Supprimer le dossier ou fichier physique
+        # Supprimer le dossier physique
         try:
-            # Nouveau format: dossier
-            if isinstance(site_data, dict) and "folder" in site_data:
-                folder_path = os.path.join(SITES_FOLDER, site_data["folder"])
-                if os.path.exists(folder_path):
-                    shutil.rmtree(folder_path)
-            # Ancien format: fichier unique
-            elif isinstance(site_data, dict) and "filename" in site_data:
-                filepath = os.path.join(SITES_FOLDER, site_data["filename"])
-                if os.path.exists(filepath):
-                    os.remove(filepath)
+            folder_path = os.path.join(SITES_FOLDER, site['folder'])
+            if os.path.exists(folder_path):
+                shutil.rmtree(folder_path)
         except Exception as e:
             print(f"Erreur lors de la suppression: {e}")
         
         return jsonify(message=f"Site '{site_name}' supprimé avec succès")
+    
     return jsonify(error=f"Le site '{site_name}' n'existe pas ou vous n'en êtes pas le propriétaire"), 404

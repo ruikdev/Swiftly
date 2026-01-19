@@ -20,6 +20,24 @@ var/
 .installed.cfg
 *.egg
 
+# Database
+db/swiftly.db
+db/swiftly_backup_*.db
+db/*.db-journal
+db/users.json
+db/sites.json
+
+# Environment
+.env
+
+# Sites uploaded
+sites/*
+!sites/exemple/
+
+# Old files
+*_old.py
+swiftly/database_old.py
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

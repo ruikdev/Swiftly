@@ -3,7 +3,7 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, flash
 from swiftly.database import (
     create_user, verify_user, update_user_email, 
-    update_user_password, users
+    update_user_password
 )
 from swiftly.utils.decorators import require_auth
 

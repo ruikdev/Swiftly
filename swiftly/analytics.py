@@ -101,13 +101,12 @@ def decrypt_data(encrypted_hex):
 
 def get_analytics_db_path(site_name):
     """Obtenir le chemin de la DB analytics pour un site"""
-    from swiftly.database import load_sites
-    sites = load_sites()
+    from swiftly.database import get_site_by_name
+    site_data = get_site_by_name(site_name)
     
-    if site_name not in sites:
+    if not site_data:
         return None
     
-    site_data = sites[site_name]
     if isinstance(site_data, dict) and "folder" in site_data:
         folder = site_data["folder"]
         site_folder = os.path.abspath(os.path.join(SITES_FOLDER, folder))

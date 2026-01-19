@@ -1,7 +1,7 @@
 """Routes utilisateur"""
 
 from flask import Blueprint, jsonify, request
-from swiftly.database import users, update_user_email, update_user_password, get_user_sites
+from swiftly.database import update_user_email, update_user_password, get_user_sites
 from swiftly.utils.decorators import require_auth
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/user')

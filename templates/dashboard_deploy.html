@@ -74,6 +74,25 @@
                 </div>
                 <div id="fileList" class="mt-4 space-y-2"></div>
                 <p class="text-xs text-slate-500 mt-2">⚠️ Votre dossier doit contenir un fichier <code class="bg-slate-100 px-1.5 py-0.5 rounded">index.html</code> à la racine</p>
+                <p class="text-xs text-amber-600 mt-1">ℹ️ <strong>Rappel important :</strong> Seuls les sites statiques (HTML/CSS/JS) sont acceptés. Pas de PHP, Python, etc.</p>
+            </div>
+
+            <!-- Domaine personnalisé -->
+            <div class="border border-slate-200 rounded-xl p-6 bg-slate-50">
+                <label for="custom_domain" class="block text-sm font-medium text-slate-700 mb-2">
+                    🌐 Domaine personnalisé (optionnel)
+                </label>
+                <input 
+                    type="text" 
+                    id="custom_domain" 
+                    name="custom_domain" 
+                    class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500 focus:ring-opacity-20 transition-colors outline-none"
+                    placeholder="www.mondomaine.com"
+                >
+                <p class="text-xs text-slate-500 mt-2">
+                    <strong>Note :</strong> Votre site sera automatiquement accessible via un sous-domaine (<code>nom-du-site.swiftly.example.com</code>).<br>
+                    Vous pouvez aussi ajouter votre propre domaine ici. Des instructions DNS vous seront fournies après le déploiement.
+                </p>
             </div>
 
             <div id="uploadProgress" class="hidden">
@@ -236,6 +255,12 @@ document.getElementById('deployForm').addEventListener('submit', async (e) => {
 
     const formData = new FormData();
     formData.append('name', name);
+    
+    // Ajouter le domaine personnalisé si fourni
+    const customDomain = document.getElementById('custom_domain').value.trim();
+    if (customDomain) {
+        formData.append('custom_domain', customDomain);
+    }
 
     // Gérer les chemins relatifs correctement
     selectedFiles.forEach(file => {
