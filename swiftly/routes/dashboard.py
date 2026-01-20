@@ -1,6 +1,6 @@
 """Routes du dashboard web"""
 
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify, make_response
 from swiftly.database import load_sites, get_user_sites, delete_site_from_db
 from swiftly.utils.decorators import require_auth
 from werkzeug.utils import secure_filename
@@ -17,9 +17,25 @@ def require_web_auth(f):
     from functools import wraps
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'email' not in session:
+        from swiftly.routes.auth import get_email_from_token
+        token = request.cookies.get('session_token')
+        print(f"[REQUIRE_WEB_AUTH] Token from cookie: {token[:10] if token else 'None'}...")
+        
+        if not token:
+            print(f"[REQUIRE_WEB_AUTH] No token in cookie, redirecting to login")
             flash('Vous devez être connecté pour accéder à cette page', 'error')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth_web.web_login'))
+        
+        email = get_email_from_token(token)
+        if not email:
+            print(f"[REQUIRE_WEB_AUTH] Invalid or expired token, redirecting to login")
+            flash('Votre session a expiré, veuillez vous reconnecter', 'error')
+            return redirect(url_for('auth_web.web_login'))
+        
+        print(f"[REQUIRE_WEB_AUTH] Valid token found for email: {email}")
+        # Stocker l'email dans g pour y accéder dans la vue
+        from flask import g
+        g.user_email = email
         return f(*args, **kwargs)
     return decorated_function
 
@@ -27,7 +43,8 @@ def require_web_auth(f):
 @require_web_auth
 def home():
     """Page d'accueil du dashboard"""
-    email = session.get('email')
+    from flask import g
+    email = g.user_email
     user_sites = get_user_sites(email)
     
     # Enrichir avec le nombre de fichiers
@@ -48,7 +65,8 @@ def deploy():
         return render_template('dashboard_deploy.html')
     
     # POST - Déployer le site
-    email = session.get('email')
+    from flask import g
+    email = g.user_email
     name = request.form.get('name')
     
     if not name:
@@ -136,7 +154,8 @@ def deploy():
 @require_web_auth
 def site_dashboard(site_name):
     """Dashboard d'un site spécifique avec analytics"""
-    email = session.get('email')
+    from flask import g
+    email = g.user_email
     current_sites = load_sites()
     
     if site_name not in current_sites:
@@ -162,7 +181,8 @@ def site_dashboard(site_name):
 @require_web_auth
 def delete_site(site_name):
     """Supprimer un site"""
-    email = session.get('email')
+    from flask import g
+    email = g.user_email
     current_sites = load_sites()
     
     if site_name not in current_sites:
@@ -187,7 +207,8 @@ def delete_site(site_name):
 @require_web_auth
 def profile():
     """Page de profil"""
-    email = session.get('email')
+    from flask import g
+    email = g.user_email
     user_sites = get_user_sites(email)
     
     return render_template('dashboard_profile.html', 
@@ -199,8 +220,9 @@ def profile():
 def update_email():
     """Mettre à jour l'email"""
     from swiftly.database import update_user_email
+    from flask import g
     
-    old_email = session.get('email')
+    old_email = g.user_email
     new_email = request.form.get('new_email')
     password = request.form.get('password')
     
@@ -209,8 +231,16 @@ def update_email():
         return redirect(url_for('dashboard.profile'))
     
     if update_user_email(old_email, new_email, password):
-        session['email'] = new_email
+        # Mettre à jour le token de session avec le nouvel email
+        from swiftly.routes.auth import active_sessions, create_session_token
+        token = request.cookies.get('session_token')
+        if token and token in active_sessions:
+            del active_sessions[token]
+        new_token = create_session_token(new_email)
         flash('Email mis à jour avec succès', 'success')
+        response = make_response(redirect(url_for('dashboard.profile')))
+        response.set_cookie('session_token', new_token, max_age=3600, httponly=True)
+        return response
     else:
         flash('Erreur: email déjà utilisé ou mot de passe incorrect', 'error')
     
@@ -221,8 +251,9 @@ def update_email():
 def update_password():
     """Mettre à jour le mot de passe"""
     from swiftly.database import update_user_password
+    from flask import g
     
-    email = session.get('email')
+    email = g.user_email
     old_password = request.form.get('old_password')
     new_password = request.form.get('new_password')
     

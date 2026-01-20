@@ -8,6 +8,9 @@ import os
 # Chemin racine du projet (parent du package swiftly)
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Stockage de sessions en mémoire
+user_sessions = {}
+
 def create_app():
     """Factory pour créer et configurer l'application Flask"""
     app = Flask(
@@ -16,11 +19,8 @@ def create_app():
         static_folder=os.path.join(ROOT_DIR, 'static')
     )
     
-    # Configuration des sessions
+    # Configuration simple des sessions
     app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
-    app.config['SESSION_COOKIE_SECURE'] = False  # True en production avec HTTPS
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     
     # Initialiser les bases de données
     init_db()

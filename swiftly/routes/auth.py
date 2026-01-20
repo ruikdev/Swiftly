@@ -1,14 +1,45 @@
 """Routes d'authentification"""
 
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, flash
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, flash, make_response
 from swiftly.database import (
     create_user, verify_user, update_user_email, 
     update_user_password, users
 )
 from swiftly.utils.decorators import require_auth
+import secrets
+import time
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 auth_web_bp = Blueprint('auth_web', __name__, url_prefix='/auth')
+
+# Stockage des sessions utilisateur en mémoire
+active_sessions = {}
+
+def create_session_token(email):
+    """Créer un token de session pour un utilisateur"""
+    token = secrets.token_urlsafe(32)
+    active_sessions[token] = {
+        'email': email,
+        'created_at': time.time()
+    }
+    return token
+
+def get_email_from_token(token):
+    """Récupérer l'email depuis un token"""
+    if token in active_sessions:
+        session_data = active_sessions[token]
+        # Vérifier si la session n'est pas expirée (1 heure)
+        if time.time() - session_data['created_at'] < 3600:
+            return session_data['email']
+        else:
+            # Session expirée, la supprimer
+            del active_sessions[token]
+    return None
+
+def delete_session_token(token):
+    """Supprimer un token de session"""
+    if token in active_sessions:
+        del active_sessions[token]
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -52,20 +83,34 @@ def login():
 def web_login():
     """Page de connexion web (seule page unifiée)"""
     if request.method == 'GET':
+        # Vérifier si déjà connecté via cookie
+        token = request.cookies.get('session_token')
+        if token and get_email_from_token(token):
+            return redirect(url_for('dashboard.home'))
         return render_template('auth.html')
     
     email = request.form.get('email')
     password = request.form.get('password')
+    
+    print(f"[LOGIN POST] Attempting login for: {email}")
     
     if not email or not password:
         flash('Email et mot de passe requis', 'error')
         return redirect(url_for('auth_web.web_login'))
     
     if verify_user(email, password):
-        session['email'] = email
+        print(f"[LOGIN POST] Verification successful for: {email}")
+        # Créer un token de session
+        token = create_session_token(email)
+        print(f"[LOGIN POST] Created session token: {token[:10]}... for {email}")
+        
         flash('Connexion réussie !', 'success')
-        return redirect(url_for('dashboard.home'))
+        response = make_response(redirect(url_for('dashboard.home')))
+        # Définir le cookie avec le token
+        response.set_cookie('session_token', token, max_age=3600, httponly=True)
+        return response
     else:
+        print(f"[LOGIN POST] Verification failed for: {email}")
         flash('Email ou mot de passe incorrect', 'error')
         return redirect(url_for('auth_web.web_login'))
 
@@ -84,9 +129,12 @@ def web_register():
         return redirect(url_for('auth_web.web_login'))
     
     if create_user(email, password):
-        session['email'] = email
+        # Créer un token de session
+        token = create_session_token(email)
         flash('Compte créé avec succès !', 'success')
-        return redirect(url_for('dashboard.home'))
+        response = make_response(redirect(url_for('dashboard.home')))
+        response.set_cookie('session_token', token, max_age=3600, httponly=True)
+        return response
     else:
         flash('Un compte avec cet email existe déjà', 'error')
         return redirect(url_for('auth_web.web_login'))
@@ -94,6 +142,10 @@ def web_register():
 @auth_web_bp.route('/logout')
 def logout():
     """Déconnexion"""
-    session.pop('email', None)
+    token = request.cookies.get('session_token')
+    if token:
+        delete_session_token(token)
     flash('Déconnexion réussie', 'success')
-    return redirect(url_for('main.index'))
+    response = make_response(redirect(url_for('main.index')))
+    response.set_cookie('session_token', '', expires=0)
+    return response

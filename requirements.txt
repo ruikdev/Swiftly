@@ -1,6 +1,7 @@
 #librairies python à installer
 
 Flask==3.0.0
+Flask-Session==0.8.0
 requests==2.31.0
 bcrypt==4.1.2
 cryptography==41.0.7
