@@ -40,13 +40,6 @@
                     {% if session.get('email') %}
                     <span class="text-sm text-slate-600">{{ session.get('email') }}</span>
                     <a href="/dashboard/profile" class="text-sm font-medium text-slate-600 hover:text-brand-600">Profil</a>
-                    <!-- Lien admin visible seulement pour les admins -->
-                    <script>
-                        fetch('/api/admin/config')
-                            .then(r => r.ok ? document.getElementById('admin-link').style.display = 'block' : null)
-                            .catch(() => {});
-                    </script>
-                    <a id="admin-link" href="/admin" style="display:none" class="text-sm font-medium text-purple-600 hover:text-purple-700">🛡️ Admin</a>
                     <a href="/auth/logout" class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 transition-colors">
                         Déconnexion
                     </a>
