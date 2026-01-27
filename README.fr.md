@@ -420,6 +420,26 @@ L'application utilise les valeurs par défaut suivantes :
 
 Vous pouvez modifier ces valeurs dans [app.py](app.py).
 
+## ✉️ Vérification email & Réinitialisation de mot de passe
+
+Swiftly inclut un système de vérification de compte par email et une fonctionnalité de réinitialisation de mot de passe par code. Pour activer l'envoi d'emails, créez un fichier `.env` à la racine et configurez les variables SMTP suivantes (un fichier `.env.example` a été ajouté) :
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=votre_email@gmail.com
+SMTP_PASSWORD=votre_mot_de_passe_application
+SMTP_FROM=votre_email@gmail.com
+SECRET_KEY=une-cle-secrete-aleatoire
+```
+
+Remarques :
+- Pour Gmail, utilisez un mot de passe d'application (App Password) et activez l'accès TLS (port 587).
+- Si la configuration SMTP est absente ou invalide, les emails ne seront pas envoyés et les fonctionnalités de vérification/réinitialisation resteront inopérantes.
+- Les codes envoyés expirent après 15 minutes.
+
+Pour plus de détails sur le flux : inscription -> envoi du code -> vérification -> création du compte, voir les routes d'authentification (`/auth/register`, `/auth/verify`, `/auth/forgot-password`, `/auth/reset-password`).
+
 ## 🔐 Fonctionnalités de Sécurité
 
 - ✅ Sécurisation des noms de fichiers avec `secure_filename()`

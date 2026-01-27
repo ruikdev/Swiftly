@@ -13,11 +13,12 @@ class User:
         return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
     
     @staticmethod
-    def create_user_dict(email, password):
+    def create_user_dict(email, password, verified=False):
         """Créer un dictionnaire utilisateur"""
         return {
             "password": User.hash_password(password),
-            "sites": []
+            "sites": [],
+            "verified": verified
         }
     
     @staticmethod

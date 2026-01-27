@@ -369,6 +369,26 @@ The application uses the following defaults:
 
 You can modify these in [app.py](app.py).
 
+## ✉️ Email verification & Password reset
+
+Swiftly includes an email-based account verification system and password reset via a code. To enable email sending, create a `.env` file at the project root and configure the following SMTP variables (a `.env.example` file has been added):
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+SMTP_FROM=your_email@gmail.com
+SECRET_KEY=some_random_secret_key
+```
+
+Notes:
+- For Gmail, use an App Password and TLS (port 587).
+- If SMTP configuration is missing or invalid, emails will not be sent and the verification/reset features will not work.
+- Codes expire after 15 minutes.
+
+For details about the flow: registration -> send code -> verify -> create account, see the auth routes (`/auth/register`, `/auth/verify`, `/auth/forgot-password`, `/auth/reset-password`).
+
 ## 📊 Analytics
 
 Swiftly includes a lightweight analytics system that collects and encrypts visit data per site. Below are the main routes and functions you’ll find in the codebase (see `swiftly/analytics.py` and `templates/dashboard_site.html`).

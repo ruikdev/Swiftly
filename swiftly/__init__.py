@@ -4,6 +4,10 @@ from flask import Flask
 from swiftly.config import DEBUG, HOST, PORT, SITES_FOLDER
 from swiftly.database import init_db
 import os
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Chemin racine du projet (parent du package swiftly)
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

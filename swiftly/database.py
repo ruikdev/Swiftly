@@ -56,11 +56,33 @@ def save_sites():
 
 # ========== Gestion des utilisateurs ==========
 
-def create_user(email, password):
+def create_user(email, password, verified=False):
     """Créer un nouvel utilisateur"""
     if email in users:
         return False
-    users[email] = User.create_user_dict(email, password)
+    users[email] = User.create_user_dict(email, password, verified)
+    save_users()
+    return True
+
+def verify_user_account(email):
+    """Marquer un compte utilisateur comme vérifié"""
+    if email not in users:
+        return False
+    users[email]["verified"] = True
+    save_users()
+    return True
+
+def is_user_verified(email):
+    """Vérifier si un utilisateur a vérifié son compte"""
+    if email not in users:
+        return False
+    return users[email].get("verified", False)
+
+def reset_user_password(email, new_password):
+    """Réinitialiser le mot de passe d'un utilisateur"""
+    if email not in users:
+        return False
+    users[email]["password"] = User.hash_password(new_password)
     save_users()
     return True
 

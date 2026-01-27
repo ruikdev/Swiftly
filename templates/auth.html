@@ -119,6 +119,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </form>
 
+                <!-- Mot de passe oublié -->
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('auth_web.forgot_password_page') }}" class="text-sm text-brand-600 hover:text-brand-700 font-medium">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+
                 <!-- Divider -->
                 <div class="mt-6 flex items-center gap-3">
                     <div class="h-px bg-slate-200 flex-1"></div>

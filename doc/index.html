@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiftly Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body h1 { @apply text-3xl font-bold mb-6 text-slate-900 border-b pb-4; }
+        .markdown-body h2 { @apply text-2xl font-bold mt-8 mb-4 text-slate-800 flex items-center gap-2; }
+        .markdown-body h3 { @apply text-xl font-semibold mt-6 mb-3 text-slate-700; }
+        .markdown-body h4 { @apply text-lg font-medium mt-4 mb-2 text-slate-600; }
+        .markdown-body p { @apply mb-4 leading-relaxed text-slate-600; }
+        .markdown-body ul { @apply list-disc list-inside mb-4 ml-4 text-slate-600; }
+        .markdown-body ol { @apply list-decimal list-inside mb-4 ml-4 text-slate-600; }
+        .markdown-body a { @apply text-brand-600 hover:text-brand-500 underline decoration-2 decoration-brand-100 hover:decoration-brand-500 transition-all; }
+        .markdown-body pre { @apply bg-slate-900 text-slate-50 p-4 rounded-xl overflow-x-auto mb-6 shadow-lg border border-slate-700; }
+        .markdown-body code { @apply font-mono text-sm; }
+        .markdown-body p code { @apply bg-slate-100 text-brand-600 px-1.5 py-0.5 rounded-md font-medium text-sm border border-slate-200; }
+        .markdown-body blockquote { @apply border-l-4 border-brand-500 pl-4 py-1 italic bg-brand-50 rounded-r-lg text-slate-700 mb-4; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .nav-item.active { @apply bg-brand-50 text-brand-600 border-r-2 border-brand-500; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 h-screen overflow-hidden flex">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-slate-200 flex flex-col h-full flex-shrink-0 z-20 transition-transform duration-300 absolute md:relative -translate-x-full md:translate-x-0" id="sidebar">
+        <div class="p-6 border-b border-slate-100 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-500/30">S</div>
+            <span class="font-bold text-xl tracking-tight text-slate-800">Swiftly <span class="text-xs font-medium text-slate-400 ml-1">Docs</span></span>
+        </div>
+        
+        <div class="p-4 border-b border-slate-100">
+            <div class="flex bg-slate-100 p-1 rounded-lg">
+                <button onclick="setLang('en')" id="btn-en" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all shadow-sm bg-white text-slate-900">English</button>
+                <button onclick="setLang('fr')" id="btn-fr" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all text-slate-500 hover:text-slate-900">Français</button>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4" id="nav-container">
+            <!-- Navigation items injected via JS -->
+        </nav>
+
+        <div class="p-4 border-t border-slate-100 text-xs text-center text-slate-400">
+            v0.0.369 • Built with ❤️
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div onclick="toggleSidebar()" id="overlay" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-10 hidden md:hidden opacity-0 transition-opacity"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 h-full overflow-y-auto relative scroll-smooth w-full" id="main-content">
+        <!-- Mobile Header -->
+        <div class="md:hidden sticky top-0 bg-white/80 backdrop-blur-md border-b border-slate-200 p-4 flex items-center justify-between z-10">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <span class="font-bold text-slate-800">Swiftly Docs</span>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto p-6 md:p-12 pb-24">
+            <div id="content-area" class="markdown-body">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Data ---
+        // Content extracted from READMEs
+        const content = {
+            en: [
+                {
+                    id: "intro",
+                    title: "Introduction",
+                    html: `
+                        <h1>🚀 Swiftly</h1>
+                        <p class="text-lg text-slate-500 mb-8">The Open Source Netlify Alternative. Deploy your static sites instantly with a simple API and CLI.</p>
+                        <div class="flex gap-2 mb-8">
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">MIT License</span>
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Python 3.8+</span>
+                            <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">Flask 3.0.0</span>
+                        </div>
+                        <p><strong>Swiftly</strong> is a lightweight, open-source platform for deploying and hosting static HTML sites. Built with Flask, it provides a simple REST API and CLI tool to manage your deployments.</p>
+                        <p>Perfect for portfolios, static blogs, landing pages, and prototypes.</p>
+                    `
+                },
+                {
+                    id: "features",
+                    title: "Features",
+                    html: `
+                        <h2>✨ Features</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🚀 Simple API</strong><br>Upload and deploy HTML files via REST API</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>💻 CLI Tool</strong><br>Command-line interface for easy deployment</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📦 File & Folder Upload</strong><br>Deploy single files or full directories</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📊 Dashboard UI</strong><br>Web interface for managing sites</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📈 Analytics</strong><br>Encrypted per-site visit tracking</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>✉️ Email Auth</strong><br>Verification & Password Reset flow</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🌐 Wildcard Subdomains</strong><br>Automatic subdomain routing</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🆓 Open Source</strong><br>100% Free & MIT Licensed</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: "quickstart",
+                    title: "Quick Start",
+                    html: `
+                        <h2>🏁 Quick Start</h2>
+                        <h3>Recommended Method</h3>
+                        <p><strong>Linux/macOS:</strong></p>
+                        <pre><code>./swiftly.sh</code></pre>
+                        <p><strong>Windows:</strong></p>
+                        <pre><code>swiftly.bat</code></pre>
+                        
+                        <h3>Manual Installation</h3>
+                        <ol>
+                            <li>Clone repo: <code>git clone https://github.com/ruikdev/Swiftly.git</code></li>
+                            <li>Create venv: <code>python3 -m venv .venv</code></li>
+                            <li>Install: <code>pip install -r requirements.txt</code></li>
+                            <li>Run: <code>python app.py</code></li>
+                        </ol>
+                    `
+                },
+                {
+                    id: "dashboard",
+                    title: "Web Dashboard",
+                    html: `
+                        <h2>🖥️ Web Dashboard</h2>
+                        <p>Access the dashboard at <code>http://localhost:5000/dashboard</code>.</p>
+                        <ul class="space-y-2">
+                            <li>✅ Login / Register via browser</li>
+                            <li>✅ Drag & Drop deployment</li>
+                            <li>✅ Site management & Preview</li>
+                            <li>✅ Analytics visualization</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: "api",
+                    title: "API Documentation",
+                    html: `
+                        <h2>🔌 API Documentation</h2>
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-mono">GET</span> /health</h3>
+                                <p>Check API status.</p>
+                                <pre><code>{"status": "ok"}</code></pre>
+                            </div>
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-mono">GET</span> /api/sites</h3>
+                                <p>List all sites.</p>
+                            </div>
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold font-mono">POST</span> /api/sites</h3>
+                                <p>Upload a new site (multipart/form-data).</p>
+                                <p>Params: <code>name</code> (string), <code>file</code> (file)</p>
+                            </div>
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold font-mono">DELETE</span> /api/sites/&lt;name&gt;</h3>
+                                <p>Delete a site.</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    id: "cli",
+                    title: "CLI Usage",
+                    html: `
+                        <h2>💻 CLI Usage</h2>
+                        <p>Run the interactive CLI:</p>
+                        <pre><code>python3 swiftly_cli.py</code></pre>
+                        <p>Features:</p>
+                        <ul>
+                            <li>Interactive menu</li>
+                            <li>Account management (Register, Login, Edit)</li>
+                            <li>Site deployment & Deletion</li>
+                            <li>Multi-language support (FR/EN)</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: "config",
+                    title: "Configuration",
+                    html: `
+                        <h2>🛠️ Configuration</h2>
+                        <p>Defaults in <code>app.py</code>:</p>
+                        <ul>
+                            <li>Host: <code>0.0.0.0</code></li>
+                            <li>Port: <code>5000</code></li>
+                            <li>DB: <code>db/sites.json</code></li>
+                        </ul>
+                        <h3>Email & SMTP</h3>
+                        <p>Configure <code>.env</code> for email features:</p>
+                        <pre><code>SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@email.com
+SMTP_PASSWORD=app_password</code></pre>
+                    `
+                }
+            ],
+            fr: [
+                {
+                    id: "intro",
+                    title: "Introduction",
+                    html: `
+                        <h1>🚀 Swiftly</h1>
+                        <p class="text-lg text-slate-500 mb-8">L'Alternative Open Source à Netlify. Déployez vos sites statiques instantanément.</p>
+                        <div class="flex gap-2 mb-8">
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">License MIT</span>
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Python 3.8+</span>
+                            <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">Flask 3.0.0</span>
+                        </div>
+                        <p><strong>Swiftly</strong> est une plateforme légère et open-source pour déployer et héberger des sites HTML statiques. Construit avec Flask, il fournit une API REST simple et un CLI.</p>
+                        <p>Parfait pour portfolios, blogs, landing pages et prototypes.</p>
+                    `
+                },
+                {
+                    id: "features",
+                    title: "Fonctionnalités",
+                    html: `
+                        <h2>✨ Fonctionnalités</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🚀 API Simple</strong><br>Upload et déploiement via REST</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>💻 Outil CLI</strong><br>Interface ligne de commande interactive</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📦 Upload Fichiers & Dossiers</strong><br>Support arborescence complète</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📊 Dashboard Web</strong><br>Gestion graphique des sites</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📈 Analytics</strong><br>Statistiques de visite chiffrées</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>✉️ Auth Email</strong><br>Vérification & Reset mot de passe</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🌐 Sous-domaines</strong><br>Support des sous-domaines génériques</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🆓 Open Source</strong><br>Licence MIT gratuite</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: "quickstart",
+                    title: "Démarrage Rapide",
+                    html: `
+                        <h2>🏁 Démarrage Rapide</h2>
+                        <h3>Méthode Recommandée</h3>
+                        <p><strong>Linux/macOS:</strong></p>
+                        <pre><code>./swiftly.sh</code></pre>
+                        <p><strong>Windows:</strong></p>
+                        <pre><code>swiftly.bat</code></pre>
+                        
+                        <h3>Installation Manuelle</h3>
+                        <ol>
+                            <li>Cloner: <code>git clone https://github.com/ruikdev/Swiftly.git</code></li>
+                            <li>Venv: <code>python3 -m venv .venv</code></li>
+                            <li>Installer: <code>pip install -r requirements.txt</code></li>
+                            <li>Lancer: <code>python app.py</code></li>
+                        </ol>
+                    `
+                },
+                {
+                    id: "dashboard",
+                    title: "Dashboard Web",
+                    html: `
+                        <h2>🖥️ Dashboard Web</h2>
+                        <p>Accès via <code>http://localhost:5000/dashboard</code>.</p>
+                        <ul class="space-y-2">
+                            <li>✅ Connexion / Inscription navigateur</li>
+                            <li>✅ Déploiement Drag & Drop</li>
+                            <li>✅ Gestion des sites & Aperçu</li>
+                            <li>✅ Visualisation des analytics</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: "api",
+                    title: "Documentation API",
+                    html: `
+                        <h2>🔌 Documentation API</h2>
+                        <div class="space-y-8">
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-mono">GET</span> /health</h3>
+                                <p>Statut de l'API.</p>
+                                <pre><code>{"status": "ok"}</code></pre>
+                            </div>
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-mono">GET</span> /api/sites</h3>
+                                <p>Lister les sites.</p>
+                            </div>
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold font-mono">POST</span> /api/sites</h3>
+                                <p>Uploader un site (multipart/form-data).</p>
+                                <p>Params: <code>name</code> (string), <code>file</code> (file)</p>
+                            </div>
+                            <div>
+                                <h3 class="flex items-center gap-2"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold font-mono">DELETE</span> /api/sites/&lt;name&gt;</h3>
+                                <p>Supprimer un site.</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    id: "cli",
+                    title: "Utilisation CLI",
+                    html: `
+                        <h2>💻 Utilisation CLI</h2>
+                        <p>Lancer le CLI interactif :</p>
+                        <pre><code>python3 swiftly_cli.py</code></pre>
+                        <p>Fonctionnalités :</p>
+                        <ul>
+                            <li>Menu interactif</li>
+                            <li>Gestion de compte (Register, Login, Edit)</li>
+                            <li>Déploiement & Suppression de sites</li>
+                            <li>Support multilingue (FR/EN)</li>
+                        </ul>
+                    `
+                },
+                {
+                    id: "config",
+                    title: "Configuration",
+                    html: `
+                        <h2>🛠️ Configuration</h2>
+                        <p>Défauts dans <code>app.py</code>:</p>
+                        <ul>
+                            <li>Hôte : <code>0.0.0.0</code></li>
+                            <li>Port : <code>5000</code></li>
+                            <li>DB : <code>db/sites.json</code></li>
+                        </ul>
+                        <h3>Email & SMTP</h3>
+                        <p>Configurer <code>.env</code> pour les emails :</p>
+                        <pre><code>SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=votre@email.com
+SMTP_PASSWORD=app_password</code></pre>
+                    `
+                }
+            ]
+        };
+
+        // --- Logic ---
+        let currentLang = 'en';
+        let activeSection = 'intro';
+
+        function setLang(lang) {
+            currentLang = lang;
+            
+            // Update buttons
+            document.getElementById('btn-en').className = lang === 'en' 
+                ? "flex-1 py-1.5 text-sm font-medium rounded-md transition-all shadow-sm bg-white text-slate-900 border border-slate-200" 
+                : "flex-1 py-1.5 text-sm font-medium rounded-md transition-all text-slate-500 hover:text-slate-900";
+                
+            document.getElementById('btn-fr').className = lang === 'fr' 
+                ? "flex-1 py-1.5 text-sm font-medium rounded-md transition-all shadow-sm bg-white text-slate-900 border border-slate-200" 
+                : "flex-1 py-1.5 text-sm font-medium rounded-md transition-all text-slate-500 hover:text-slate-900";
+
+            renderNav();
+            renderContent(activeSection);
+        }
+
+        function renderNav() {
+            const navContainer = document.getElementById('nav-container');
+            navContainer.innerHTML = '';
+            
+            content[currentLang].forEach(section => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-6 py-2.5 text-sm font-medium transition-colors border-l-2 ${activeSection === section.id ? 'bg-brand-50 text-brand-600 border-brand-500' : 'text-slate-600 hover:bg-slate-50 border-transparent hover:text-slate-900'}`;
+                btn.textContent = section.title;
+                btn.onclick = () => {
+                    activeSection = section.id;
+                    renderNav();
+                    renderContent(section.id);
+                    if(window.innerWidth < 768) toggleSidebar();
+                };
+                navContainer.appendChild(btn);
+            });
+        }
+
+        function renderContent(sectionId) {
+            const section = content[currentLang].find(s => s.id === sectionId);
+            const contentArea = document.getElementById('content-area');
+            
+            // Fade out effect could be added here
+            contentArea.innerHTML = section.html;
+            window.scrollTo(0,0);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const isHidden = sidebar.classList.contains('-translate-x-full');
+
+            if (isHidden) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        // Init
+        setLang('en');
+    </script>
+</body>
+</html>
