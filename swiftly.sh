@@ -88,6 +88,7 @@ echo -e "\n${BLUE}[4/5]${NC} Installation des dépendances..."
 if ! python -c "import requests" 2>/dev/null; then
     echo -e "${BLUE}📦 Installation de requests...${NC}"
     pip install requests -q
+    pip install rich -q
     echo -e "${GREEN}✅ requests installé${NC}"
 else
     echo -e "${GREEN}✅ requests déjà installé${NC}"
