@@ -117,9 +117,9 @@ def update_user_password(email, old_password, new_password):
 
 # ========== Gestion des sites ==========
 
-def add_site_to_db(name, folder, owner):
+def add_site_to_db(name, folder, owner, is_spa=False):
     """Ajouter un site à la base de données"""
-    sites[name] = Site.create_site_dict(folder, owner)
+    sites[name] = Site.create_site_dict(folder, owner, is_spa=is_spa)
     if owner in users:
         if name not in users[owner]["sites"]:
             users[owner]["sites"].append(name)

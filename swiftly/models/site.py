@@ -4,11 +4,12 @@ class Site:
     """Classe représentant un site"""
     
     @staticmethod
-    def create_site_dict(folder, owner):
+    def create_site_dict(folder, owner, is_spa=False):
         """Créer un dictionnaire site"""
         return {
             "folder": folder,
-            "owner": owner
+            "owner": owner,
+            "is_spa": is_spa
         }
     
     @staticmethod

@@ -36,6 +36,7 @@ def serve_site(site_name, subpath=None):
     if isinstance(site_data, dict) and "folder" in site_data:
         folder = site_data["folder"]
         site_folder = os.path.abspath(os.path.join(SITES_FOLDER, folder))
+        is_spa = site_data.get("is_spa", False)
         
         # Si pas de sous-chemin, rediriger vers la version avec slash si nécessaire
         if not subpath:
@@ -54,14 +55,30 @@ def serve_site(site_name, subpath=None):
         
         # Servir le fichier demandé
         file_path = os.path.join(site_folder, subpath)
-        if os.path.exists(file_path) and os.path.isfile(file_path):
-            # Sécurité: vérifier qu'on ne sort pas du dossier du site
-            real_site_folder = os.path.realpath(site_folder)
-            real_file_path = os.path.realpath(file_path)
-            if real_file_path.startswith(real_site_folder):
-                return send_from_directory(site_folder, subpath)
         
-        abort(404, description=f"Fichier '{subpath}' introuvable")
+        # Sécurité: vérifier qu'on ne sort pas du dossier du site
+        real_site_folder = os.path.realpath(site_folder)
+        real_file_path = os.path.realpath(file_path)
+        
+        if not real_file_path.startswith(real_site_folder):
+            abort(403, description="Accès refusé")
+        
+        # Pour les SPAs : si le fichier n'existe pas, servir index.html
+        if is_spa:
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                return send_from_directory(site_folder, subpath)
+            else:
+                # Servir index.html pour que Angular Router prenne le relais
+                index_path = os.path.join(site_folder, "index.html")
+                if os.path.exists(index_path):
+                    return send_from_directory(site_folder, "index.html")
+                abort(404, description=f"index.html introuvable pour la SPA '{site_name}'")
+        else:
+            # Pour les sites statiques classiques : erreur 404 si fichier absent
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                return send_from_directory(site_folder, subpath)
+            else:
+                abort(404, description=f"Fichier '{subpath}' introuvable")
     
     # Support ancien format (fichier unique) pour compatibilité
     elif isinstance(site_data, dict) and "filename" in site_data:

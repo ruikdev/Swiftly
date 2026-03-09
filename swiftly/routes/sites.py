@@ -11,6 +11,45 @@ from swiftly.utils.decorators import require_auth
 
 sites_bp = Blueprint('sites', __name__, url_prefix='/api/sites')
 
+def detect_spa(file_list):
+    """
+    Détecter si les fichiers uploadés correspondent à une SPA (Single Page Application)
+    Heuristiques :
+    - Présence de index.html
+    - Fichiers .js ou .css avec hash dans le nom (ex: main-ABC123.js)
+    - Absence de fichiers de backend (.php, .py, .jsp, etc.)
+    
+    Retourne True si au moins 2 heuristiques sont satisfaites
+    """
+    has_index_html = False
+    has_hashed_assets = False
+    has_no_backend = True
+    
+    backend_extensions = {'.php', '.py', '.jsp', '.asp', '.aspx', '.rb', '.go', '.java'}
+    
+    for file_name in file_list:
+        # Vérifier index.html
+        if file_name == 'index.html' or file_name.endswith('/index.html'):
+            has_index_html = True
+        
+        # Tester fichiers de backend
+        if any(file_name.endswith(ext) for ext in backend_extensions):
+            has_no_backend = False
+        
+        # Détecter les fichiers hashés (pattern: name-HASH.ext)
+        # Exemple: main-6V5E6UC3.js, styles-5INURTSO.css
+        if re.search(r'-[a-zA-Z0-9]{6,}\.(js|css)$', file_name):
+            has_hashed_assets = True
+    
+    # Compter les heuristiques satisfaites
+    spa_indicators = sum([
+        has_index_html,
+        has_hashed_assets,
+        has_no_backend
+    ])
+    
+    return spa_indicators >= 2
+
 def fix_absolute_paths_in_file(file_path, site_name):
     """
     Remplace les chemins absolus du type /sites/*/... par des chemins relatifs
@@ -133,8 +172,11 @@ def create_site_route(auth_email):
                 uploaded_files=uploaded_files
             ), 400
         
+        # Détecter si c'est une SPA
+        is_spa = detect_spa(uploaded_files)
+        
         # Ajouter le site à la DB
-        add_site_to_db(name, site_folder_name, auth_email)
+        add_site_to_db(name, site_folder_name, auth_email, is_spa=is_spa)
         
         response_data = {
             "message": f"Site '{name}' déployé avec succès",
@@ -184,3 +226,28 @@ def remove_site_route(auth_email, site_name):
         
         return jsonify(message=f"Site '{site_name}' supprimé avec succès")
     return jsonify(error=f"Le site '{site_name}' n'existe pas ou vous n'en êtes pas le propriétaire"), 404
+
+@sites_bp.route('/<site_name>', methods=['PATCH'])
+@require_auth
+def update_site_route(auth_email, site_name):
+    """Mettre à jour les propriétés d'un site (ex: is_spa)"""
+    if site_name not in sites:
+        return jsonify(error=f"Le site '{site_name}' n'existe pas"), 404
+    
+    site_data = sites[site_name]
+    
+    # Vérifier que l'utilisateur est propriétaire
+    if site_data.get("owner") != auth_email:
+        return jsonify(error="Vous n'êtes pas le propriétaire de ce site"), 403
+    
+    # Récupérer les données à mettre à jour
+    data = request.get_json() or {}
+    
+    # Permettre de mettre à jour is_spa
+    if "is_spa" in data:
+        site_data["is_spa"] = bool(data["is_spa"])
+        from swiftly.database import save_sites
+        save_sites()
+        return jsonify(message=f"Site '{site_name}' mis à jour", site={site_name: site_data}), 200
+    
+    return jsonify(error="Aucune propriété valide à mettre à jour"), 400
