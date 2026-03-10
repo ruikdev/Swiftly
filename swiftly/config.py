@@ -1,6 +1,9 @@
 """Configuration de l'application Swiftly"""
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Chemins des bases de données
 DB_USERS = "db/users.json"
@@ -10,7 +13,7 @@ DB_SITES = "db/sites.json"
 SITES_FOLDER = "sites"
 
 # Clé de cryptage pour les analytics (généré avec Fernet.generate_key())
-ANALYTICS_ENCRYPTION_KEY = b'ZliOEOl1awGF9J3OCZPhTvXVMvVc7_0qgtBh1OMXDqo='
+ANALYTICS_ENCRYPTION_KEY = os.getenv("ANALYTICS_ENCRYPTION_KEY")
 
 # Configuration Flask
 DEBUG = True
