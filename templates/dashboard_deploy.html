@@ -76,6 +76,30 @@
                 <p class="text-xs text-slate-500 mt-2">⚠️ Votre dossier doit contenir un fichier <code class="bg-slate-100 px-1.5 py-0.5 rounded">index.html</code> à la racine</p>
             </div>
 
+            <div>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                    <div class="relative mt-0.5">
+                        <input type="checkbox" id="is_spa" name="is_spa" class="sr-only peer">
+                        <div class="w-5 h-5 border-2 border-slate-300 rounded peer-checked:bg-brand-600 peer-checked:border-brand-600 transition-colors group-hover:border-brand-400 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white hidden peer-checked:block" id="checkIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-slate-700">C'est une SPA (Single Page Application)</span>
+                        <p class="text-xs text-slate-500 mt-0.5">Cochez si vous déployez un site Angular, React, Vue, etc. Les routes inconnues seront redirigées vers <code class="bg-slate-100 px-1 rounded">index.html</code>.</p>
+                    </div>
+                </label>
+            </div>
+
+            <div>
+                <p class="text-sm text-yellow-600">
+                    ⚠️Le système ne supporte pas les sites spa utilisant du ssr⚠️
+                </p>
+                <p class="text-sm text-slate-500">
+                    Pensez aussi à build votre projet.
+                </p>
+            </div>
+
             <div id="uploadProgress" class="hidden">
                 <div class="bg-brand-50 border border-brand-200 rounded-xl p-4">
                     <div class="flex items-center gap-3 mb-2">
@@ -213,7 +237,10 @@ function displayFiles() {
         </div>
     `;
 }
-
+    // Afficher la coche dans la checkbox custom
+    document.getElementById('is_spa').addEventListener('change', function() {
+        document.getElementById('checkIcon').classList.toggle('hidden', !this.checked);
+    });
 document.getElementById('deployForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -236,6 +263,7 @@ document.getElementById('deployForm').addEventListener('submit', async (e) => {
 
     const formData = new FormData();
     formData.append('name', name);
+    formData.append('is_spa', document.getElementById('is_spa').checked ? '1' : '0');
 
     // Gérer les chemins relatifs correctement
     selectedFiles.forEach(file => {

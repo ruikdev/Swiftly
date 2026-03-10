@@ -128,7 +128,8 @@ def deploy():
             shutil.rmtree(site_path)
             return jsonify(error="Le site doit contenir un fichier 'index.html' à la racine"), 400
         
-        add_site_to_db(name, site_folder_name, email)
+        is_spa = request.form.get('is_spa', '0') == '1'
+        add_site_to_db(name, site_folder_name, email, is_spa=is_spa)
         
         # Initialiser la DB analytics pour ce site
         init_analytics_db(name)
