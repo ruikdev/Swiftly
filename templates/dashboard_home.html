@@ -6,12 +6,12 @@
 <div class="mb-8">
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900 mb-2">Mes Sites</h1>
-            <p class="text-slate-600">Gérez tous vos sites déployés</p>
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">My Sites</h1>
+            <p class="text-slate-600">Manage all your deployed sites</p>
         </div>
         <a href="/dashboard/deploy" class="px-6 py-3 text-base font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Nouveau Site
+            New Site
         </a>
     </div>
 </div>
@@ -27,7 +27,7 @@
             <button 
                 onclick="deleteSite('{{ site_name }}')"
                 class="text-slate-400 hover:text-red-600 transition-colors"
-                title="Supprimer"
+                title="Delete"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
@@ -41,7 +41,7 @@
         <p class="text-sm text-slate-600 mb-4">
             <span class="inline-flex items-center gap-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                {{ site_data.file_count }} fichier{{ 's' if site_data.file_count > 1 else '' }}
+                {{ site_data.file_count }} file{{ 's' if site_data.file_count > 1 else '' }}
             </span>
         </p>
         {% endif %}
@@ -60,7 +60,7 @@
                 target="_blank"
                 class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium text-sm"
             >
-                Voir le site
+                View site
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </a>
         </div>
@@ -72,11 +72,11 @@
     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
         <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
     </div>
-    <h3 class="text-xl font-bold text-slate-900 mb-2">Aucun site déployé</h3>
-    <p class="text-slate-600 mb-6">Commencez par déployer votre premier site web</p>
+    <h3 class="text-xl font-bold text-slate-900 mb-2">No deployed sites</h3>
+    <p class="text-slate-600 mb-6">Start by deploying your first website</p>
     <a href="/dashboard/deploy" class="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        Déployer mon premier site
+        Deploy my first site
     </a>
 </div>
 {% endif %}
@@ -85,7 +85,7 @@
 {% block scripts %}
 <script>
 async function deleteSite(siteName) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer le site "${siteName}" ?`)) {
+    if (!confirm(`Are you sure you want to delete the site "${siteName}"?`)) {
         return;
     }
 
@@ -99,10 +99,10 @@ async function deleteSite(siteName) {
         if (response.ok) {
             window.location.reload();
         } else {
-            alert('Erreur: ' + (data.error || 'Une erreur est survenue'));
+            alert('Error: ' + (data.error || 'An error occurred'));
         }
     } catch (error) {
-        alert('Erreur de connexion: ' + error.message);
+        alert('Connection error: ' + error.message);
     }
 }
 </script>

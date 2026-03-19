@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,13 +39,13 @@
                 <div class="flex items-center gap-4">
                     {% if session.get('email') %}
                     <span class="text-sm text-slate-600">{{ session.get('email') }}</span>
-                    <a href="/dashboard/profile" class="text-sm font-medium text-slate-600 hover:text-brand-600">Profil</a>
+                    <a href="/dashboard/profile" class="text-sm font-medium text-slate-600 hover:text-brand-600">Profile</a>
                     <a href="/auth/logout" class="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 transition-colors">
-                        Déconnexion
+                        Logout
                     </a>
                     {% else %}
                     <a href="/auth/login" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 rounded-full hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/30">
-                        Authentification
+                        Sign In
                     </a>
                     {% endif %}
                 </div>

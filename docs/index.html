@@ -57,7 +57,7 @@
         <div class="p-4 border-b border-slate-100">
             <div class="flex bg-slate-100 p-1 rounded-lg">
                 <button onclick="setLang('en')" id="btn-en" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all shadow-sm bg-white text-slate-900">English</button>
-                <button onclick="setLang('fr')" id="btn-fr" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all text-slate-500 hover:text-slate-900">Français</button>
+                <button onclick="setLang('fr')" id="btn-fr" class="flex-1 py-1.5 text-sm font-medium rounded-md transition-all text-slate-500 hover:text-slate-900">French</button>
             </div>
         </div>
 
@@ -232,107 +232,107 @@ SMTP_PASSWORD=app_password</code></pre>
                     title: "Introduction",
                     html: `
                         <h1>🚀 Swiftly</h1>
-                        <p class="text-lg text-slate-500 mb-8">L'Alternative Open Source à Netlify. Déployez vos sites statiques instantanément.</p>
+                        <p class="text-lg text-slate-500 mb-8">The Open Source Netlify Alternative. Deploy your static sites instantly with a simple API and CLI.</p>
                         <div class="flex gap-2 mb-8">
-                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">License MIT</span>
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">MIT License</span>
                             <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">Python 3.8+</span>
                             <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">Flask 3.0.0</span>
                         </div>
-                        <p><strong>Swiftly</strong> est une plateforme légère et open-source pour déployer et héberger des sites HTML statiques. Construit avec Flask, il fournit une API REST simple et un CLI.</p>
-                        <p>Parfait pour portfolios, blogs, landing pages et prototypes.</p>
+                        <p><strong>Swiftly</strong> is a lightweight, open-source platform for deploying and hosting static HTML sites. Built with Flask, it provides a simple REST API and CLI tool to manage your deployments.</p>
+                        <p>Perfect for portfolios, static blogs, landing pages, and prototypes.</p>
                     `
                 },
                 {
                     id: "features",
-                    title: "Fonctionnalités",
+                    title: "Features",
                     html: `
-                        <h2>✨ Fonctionnalités</h2>
+                        <h2>✨ Features</h2>
                         <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🚀 API Simple</strong><br>Upload et déploiement via REST</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>💻 Outil CLI</strong><br>Interface ligne de commande interactive</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📦 Upload Fichiers & Dossiers</strong><br>Support arborescence complète</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📊 Dashboard Web</strong><br>Gestion graphique des sites</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📈 Analytics</strong><br>Statistiques de visite chiffrées</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>✉️ Auth Email</strong><br>Vérification & Reset mot de passe</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🌐 Sous-domaines</strong><br>Support des sous-domaines génériques</li>
-                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🆓 Open Source</strong><br>Licence MIT gratuite</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🚀 Simple API</strong><br>Upload and deploy HTML files via REST API</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>💻 CLI Tool</strong><br>Command-line interface for easy deployment</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📦 File & Folder Upload</strong><br>Deploy single files or full directories</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📊 Dashboard UI</strong><br>Web interface for managing sites</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>📈 Analytics</strong><br>Encrypted per-site visit tracking</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>✉️ Email Auth</strong><br>Verification & Password Reset flow</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🌐 Wildcard Subdomains</strong><br>Automatic subdomain routing</li>
+                            <li class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm"><strong>🆓 Open Source</strong><br>100% Free & MIT Licensed</li>
                         </ul>
                     `
                 },
                 {
                     id: "quickstart",
-                    title: "Démarrage Rapide",
+                    title: "Quick Start",
                     html: `
-                        <h2>🏁 Démarrage Rapide</h2>
-                        <h3>Méthode Recommandée</h3>
+                        <h2>🏁 Quick Start</h2>
+                        <h3>Recommended Method</h3>
                         <p><strong>Linux/macOS:</strong></p>
                         <pre><code>./swiftly.sh</code></pre>
                         <p><strong>Windows:</strong></p>
                         <pre><code>swiftly.bat</code></pre>
                         
-                        <h3>Installation Manuelle</h3>
+                        <h3>Manual Installation</h3>
                         <ol>
-                            <li>Cloner: <code>git clone https://github.com/ruikdev/Swiftly.git</code></li>
-                            <li>Venv: <code>python3 -m venv .venv</code></li>
-                            <li>Installer: <code>pip install -r requirements.txt</code></li>
-                            <li>Lancer: <code>python app.py</code></li>
+                            <li>Clone repo: <code>git clone https://github.com/ruikdev/Swiftly.git</code></li>
+                            <li>Create venv: <code>python3 -m venv .venv</code></li>
+                            <li>Install: <code>pip install -r requirements.txt</code></li>
+                            <li>Run: <code>python app.py</code></li>
                         </ol>
                     `
                 },
                 {
                     id: "dashboard",
-                    title: "Dashboard Web",
+                    title: "Web Dashboard",
                     html: `
-                        <h2>🖥️ Dashboard Web</h2>
-                        <p>Accès via <code>http://localhost:5000/dashboard</code>.</p>
+                        <h2>🖥️ Web Dashboard</h2>
+                        <p>Access the dashboard at <code>http://localhost:5000/dashboard</code>.</p>
                         <ul class="space-y-2">
-                            <li>✅ Connexion / Inscription navigateur</li>
-                            <li>✅ Déploiement Drag & Drop</li>
-                            <li>✅ Gestion des sites & Aperçu</li>
-                            <li>✅ Visualisation des analytics</li>
+                            <li>✅ Login / Register via browser</li>
+                            <li>✅ Drag & Drop deployment</li>
+                            <li>✅ Site management & Preview</li>
+                            <li>✅ Analytics visualization</li>
                         </ul>
                     `
                 },
                 {
                     id: "api",
-                    title: "Documentation API",
+                    title: "API Documentation",
                     html: `
-                        <h2>🔌 Documentation API</h2>
+                        <h2>🔌 API Documentation</h2>
                         <div class="space-y-8">
                             <div>
                                 <h3 class="flex items-center gap-2"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-mono">GET</span> /health</h3>
-                                <p>Statut de l'API.</p>
+                                <p>Check API status.</p>
                                 <pre><code>{"status": "ok"}</code></pre>
                             </div>
                             <div>
                                 <h3 class="flex items-center gap-2"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold font-mono">GET</span> /api/sites</h3>
-                                <p>Lister les sites.</p>
+                                <p>List all sites.</p>
                             </div>
                             <div>
                                 <h3 class="flex items-center gap-2"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold font-mono">POST</span> /api/sites</h3>
-                                <p>Uploader un site (multipart/form-data).</p>
+                                <p>Upload a new site (multipart/form-data).</p>
                                 <p>Params: <code>name</code> (string), <code>file</code> (file)</p>
                             </div>
                             <div>
                                 <h3 class="flex items-center gap-2"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold font-mono">DELETE</span> /api/sites/&lt;name&gt;</h3>
-                                <p>Supprimer un site.</p>
+                                <p>Delete a site.</p>
                             </div>
                         </div>
                     `
                 },
                 {
                     id: "cli",
-                    title: "Utilisation CLI",
+                    title: "CLI Usage",
                     html: `
-                        <h2>💻 Utilisation CLI</h2>
-                        <p>Lancer le CLI interactif :</p>
+                        <h2>💻 CLI Usage</h2>
+                        <p>Run the interactive CLI:</p>
                         <pre><code>python3 swiftly_cli.py</code></pre>
-                        <p>Fonctionnalités :</p>
+                        <p>Features:</p>
                         <ul>
-                            <li>Menu interactif</li>
-                            <li>Gestion de compte (Register, Login, Edit)</li>
-                            <li>Déploiement & Suppression de sites</li>
-                            <li>Support multilingue (FR/EN)</li>
+                            <li>Interactive menu</li>
+                            <li>Account management (Register, Login, Edit)</li>
+                            <li>Site deployment & Deletion</li>
+                            <li>Multi-language support (FR/EN)</li>
                         </ul>
                     `
                 },
@@ -341,17 +341,17 @@ SMTP_PASSWORD=app_password</code></pre>
                     title: "Configuration",
                     html: `
                         <h2>🛠️ Configuration</h2>
-                        <p>Défauts dans <code>app.py</code>:</p>
+                        <p>Defaults in <code>app.py</code>:</p>
                         <ul>
-                            <li>Hôte : <code>0.0.0.0</code></li>
-                            <li>Port : <code>5000</code></li>
-                            <li>DB : <code>db/sites.json</code></li>
+                            <li>Host: <code>0.0.0.0</code></li>
+                            <li>Port: <code>5000</code></li>
+                            <li>DB: <code>db/sites.json</code></li>
                         </ul>
                         <h3>Email & SMTP</h3>
-                        <p>Configurer <code>.env</code> pour les emails :</p>
+                        <p>Configure <code>.env</code> for email features:</p>
                         <pre><code>SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=votre@email.com
+SMTP_USER=your@email.com
 SMTP_PASSWORD=app_password</code></pre>
                     `
                 }

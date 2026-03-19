@@ -12,14 +12,14 @@
         </a>
         <div>
             <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ site_name }}</h1>
-            <p class="text-slate-600">Analytics et statistiques de visite</p>
+            <p class="text-slate-600">Analytics and visit statistics</p>
         </div>
     </div>
     
     <div class="flex gap-4">
         <a href="https://{{ site_name }}.swiftly.ruikdev.me" target="_blank" class="px-4 py-2 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-all inline-flex items-center gap-2">
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            Voir le site
+            View site
         </a>
     </div>
 </div>
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="text-3xl font-bold mb-1">{{ stats.total_visits }}</div>
-        <div class="text-blue-100 text-sm">Visites totales</div>
+        <div class="text-blue-100 text-sm">Total visits</div>
     </div>
     
     <div class="group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
@@ -44,7 +44,7 @@
             </div>
         </div>
         <div class="text-3xl font-bold mb-1">{{ stats.unique_ips }}</div>
-        <div class="text-purple-100 text-sm">Visiteurs uniques</div>
+        <div class="text-purple-100 text-sm">Unique visitors</div>
     </div>
     
     <div class="group transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
@@ -54,28 +54,28 @@
             </div>
         </div>
         <div class="text-3xl font-bold mb-1">{{ stats.countries|length }}</div>
-        <div class="text-green-100 text-sm">Pays différents</div>
+        <div class="text-green-100 text-sm">Different countries</div>
     </div>
 </div>
 
-<!-- Graphiques -->
+<!-- Charts -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Navigateurs -->
+    <!-- Browsers -->
     <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
         <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
             <i class="fa-solid fa-window-restore text-brand-600"></i>
-            Navigateurs
+            Browsers
         </h3>
         <div style="position: relative; height: 250px;">
             <canvas id="browsersChart"></canvas>
         </div>
     </div>
     
-    <!-- Systèmes d'exploitation -->
+    <!-- Operating systems -->
     <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
         <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
             <i class="fa-solid fa-desktop text-brand-600"></i>
-            Systèmes d'exploitation
+            Operating systems
         </h3>
         <div style="position: relative; height: 250px;">
             <canvas id="osChart"></canvas>
@@ -83,11 +83,11 @@
     </div>
 </div>
 
-<!-- Pays -->
+<!-- Countries -->
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-8">
     <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
         <i class="fa-solid fa-globe text-brand-600"></i>
-        Répartition géographique
+        Geographic distribution
     </h3>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for country, count in stats.countries.items() %}
@@ -103,7 +103,7 @@
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-8">
     <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
         <i class="fa-solid fa-link text-brand-600"></i>
-        Sources de trafic
+        Traffic sources
     </h3>
     <div class="space-y-3">
         {% for referrer, count in stats.referrers.items() %}
@@ -123,11 +123,11 @@
     </div>
 </div>
 
-<!-- Visites par jour -->
+<!-- Visits per day -->
 <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
     <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
         <i class="fa-solid fa-chart-column text-brand-600"></i>
-        Visites quotidiennes
+        Daily visits
     </h3>
     <div style="position: relative; height: 300px;">
         <canvas id="dailyChart"></canvas>
@@ -139,8 +139,8 @@
     <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
         <i class="fa-solid fa-chart-simple text-4xl text-slate-400"></i>
     </div>
-    <h3 class="text-xl font-bold text-slate-900 mb-2">Aucune donnée analytique</h3>
-    <p class="text-slate-600">Les statistiques apparaîtront dès que votre site recevra des visiteurs</p>
+    <h3 class="text-xl font-bold text-slate-900 mb-2">No analytics data</h3>
+    <p class="text-slate-600">Statistics will appear once your site starts receiving visitors</p>
 </div>
 {% endif %}
 {% endblock %}
@@ -149,7 +149,7 @@
 {% if stats %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-// S'assurer que le script ne s'exécute qu'une seule fois
+// Make sure the script runs only once
 if (!window.chartsInitialized) {
     window.chartsInitialized = true;
     
@@ -159,7 +159,7 @@ if (!window.chartsInitialized) {
         '#06b6d4', '#ef4444', '#f97316', '#84cc16', '#a855f7'
     ];
 
-    // Navigateurs
+    // Browsers
     const browsersCtx = document.getElementById('browsersChart');
     if (browsersCtx) {
         const browsersData = {{ stats.browsers|tojson }};
@@ -221,7 +221,7 @@ if (!window.chartsInitialized) {
         });
     }
 
-    // Visites quotidiennes
+    // Daily visits
     const dailyCtx = document.getElementById('dailyChart');
     if (dailyCtx) {
         const dailyData = {{ stats.daily|tojson }};
@@ -230,7 +230,7 @@ if (!window.chartsInitialized) {
             data: {
                 labels: Object.keys(dailyData),
                 datasets: [{
-                    label: 'Visites',
+                    label: 'Visits',
                     data: Object.values(dailyData),
                     backgroundColor: 'rgba(99, 102, 241, 0.1)',
                     borderColor: brandColor,
