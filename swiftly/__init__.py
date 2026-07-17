@@ -1,6 +1,6 @@
 """Factory Flask et initialisation de l'application"""
 
-from flask import Flask
+from flask import Flask, render_template
 from swiftly.config import DEBUG, HOST, PORT, SITES_FOLDER
 from swiftly.database import init_db
 import os
@@ -46,5 +46,9 @@ def create_app():
     app.register_blueprint(user_bp)
     app.register_blueprint(sites_bp)
     app.register_blueprint(dashboard_bp)  # Dashboard
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('404.html'), 404
     
     return app

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>404 — Page non trouvée</title>
+	<!-- Tailwind CDN pour prototypage rapide -->
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center">
+	<main class="max-w-3xl mx-auto p-6 text-center">
+		<div class="inline-flex items-center justify-center h-40 w-40 rounded-full bg-gradient-to-br from-red-200 to-red-400 mb-6">
+			<span class="text-5xl font-extrabold text-white">404</span>
+		</div>
+		<h1 class="text-3xl font-semibold text-gray-900 mb-2">Page Not Found</h1>
+		<p class="text-gray-600 mb-6">Sorry, the page you are looking for does not exist or has been moved.</p>
+		<div class="flex flex-col sm:flex-row gap-3 justify-center">
+			<a href="{{ url_for('main.index') }}" class="inline-block px-5 py-3 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700">Return to Home</a>
+			<a href="mailto:axel@ruikdev.me" class="inline-block px-5 py-3 border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100">Contact Us</a>
+		</div>
+		<p class="mt-8 text-sm text-gray-400">If you think this is a mistake, please contact the administrator.</p>
+	</main>
+</body>
+</html>
